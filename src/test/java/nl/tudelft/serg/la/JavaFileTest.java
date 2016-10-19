@@ -19,9 +19,14 @@ public class JavaFileTest {
 		Assert.assertEquals(0, file.logDensity(), 0.0001);
 	}
 	
+	@Test
+	public void calculateAverageLoggingLevel() {
+		JavaFile file = fileWithManyLogs();
+		
+		// weight=76, logs=21 => 76/21
+		Assert.assertEquals(76/21.0, file.averageLoggingLevel(), 0.0001);
+	}
 	
-	
-
 	private JavaFile fileWithManyLogs() {
 		JavaFile file = new JavaFile("SomeClass.java", 100);
 		file.log("info");

@@ -9,6 +9,17 @@ public class JavaFile {
 	private int loc;
 	private Map<String, Integer> qtyOfLogs;
 	
+	private static Map<String, Integer> weights;
+	static {
+		weights = new HashMap<>();
+		weights.put("TRACE", 1);
+		weights.put("DEBUG", 2);
+		weights.put("INFO", 3);
+		weights.put("WARN", 4);
+		weights.put("ERROR", 5);
+		weights.put("FATAL", 6);
+	}
+	
 	public JavaFile(String fullPath, int loc) {
 		this.fullPath = fullPath;
 		this.loc = loc;
@@ -65,8 +76,18 @@ public class JavaFile {
 		return totalLogs() / (double) loc;
 	}
 
-	private int totalLogs() {
+	public int totalLogs() {
 		return qtyOfLogs.values().stream().mapToInt(i -> i.intValue()).sum();
+	}
+
+	public double averageLoggingLevel() {
+		int weight = 0;
+		for(String logLevel : qtyOfLogs.keySet()) {
+			weight += qtyOfLogs.get(logLevel) * weights.get(logLevel);
+		}
+		
+		return weight / (double) totalLogs();
+		
 	}	
 	
 }
