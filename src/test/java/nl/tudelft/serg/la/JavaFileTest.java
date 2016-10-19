@@ -29,27 +29,27 @@ public class JavaFileTest {
 	
 	private JavaFile fileWithManyLogs() {
 		JavaFile file = new JavaFile("SomeClass.java", 100);
-		file.log("info");
-		file.log("warn");
-		file.log("warn");
-		file.log("debug");
-		file.log("debug");
-		file.log("debug");
-		file.log("fatal");
-		file.log("fatal");
-		file.log("fatal");
-		file.log("fatal");
-		file.log("trace");
-		file.log("trace");
-		file.log("trace");
-		file.log("trace");
-		file.log("trace");
-		file.log("error");
-		file.log("error");
-		file.log("error");
-		file.log("error");
-		file.log("error");
-		file.log("error");
+		file.log(LogLevel.INFO);
+		file.log(LogLevel.WARN);
+		file.log(LogLevel.WARN);
+		file.log(LogLevel.DEBUG);
+		file.log(LogLevel.DEBUG);
+		file.log(LogLevel.DEBUG);
+		file.log(LogLevel.FATAL);
+		file.log(LogLevel.FATAL);
+		file.log(LogLevel.FATAL);
+		file.log(LogLevel.FATAL);
+		file.log(LogLevel.TRACE);
+		file.log(LogLevel.TRACE);
+		file.log(LogLevel.TRACE);
+		file.log(LogLevel.TRACE);
+		file.log(LogLevel.TRACE);
+		file.log(LogLevel.ERROR);
+		file.log(LogLevel.ERROR);
+		file.log(LogLevel.ERROR);
+		file.log(LogLevel.ERROR);
+		file.log(LogLevel.ERROR);
+		file.log(LogLevel.ERROR);
 		return file;
 	}
 }

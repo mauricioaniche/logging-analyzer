@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import nl.tudelft.serg.la.JavaFile;
+import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.jdt.JDTRunner;
 
 public class LogDetectionVisitorTest {
@@ -36,19 +37,19 @@ public class LogDetectionVisitorTest {
 		
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
-		Assert.assertEquals(2, result1.getQtyOfInfoLogs());
-		Assert.assertEquals(1, result1.getQtyOfWarnLogs());
-		Assert.assertEquals(1, result1.getQtyOfTraceLogs());
-		Assert.assertEquals(1, result1.getQtyOfDebugLogs());
-		Assert.assertEquals(1, result1.getQtyOfFatalLogs());
-		Assert.assertEquals(1, result1.getQtyOfErrorLogs());
+		Assert.assertEquals(2, result1.getQtyLogs(LogLevel.INFO));
+		Assert.assertEquals(1, result1.getQtyLogs(LogLevel.WARN));
+		Assert.assertEquals(1, result1.getQtyLogs(LogLevel.TRACE));
+		Assert.assertEquals(1, result1.getQtyLogs(LogLevel.DEBUG));
+		Assert.assertEquals(1, result1.getQtyLogs(LogLevel.FATAL));
+		Assert.assertEquals(1, result1.getQtyLogs(LogLevel.ERROR));
 
-		Assert.assertEquals(2, result2.getQtyOfInfoLogs());
-		Assert.assertEquals(1, result2.getQtyOfWarnLogs());
-		Assert.assertEquals(1, result2.getQtyOfTraceLogs());
-		Assert.assertEquals(1, result2.getQtyOfDebugLogs());
-		Assert.assertEquals(1, result2.getQtyOfFatalLogs());
-		Assert.assertEquals(1, result2.getQtyOfErrorLogs());
+		Assert.assertEquals(2, result2.getQtyLogs(LogLevel.INFO));
+		Assert.assertEquals(1, result2.getQtyLogs(LogLevel.WARN));
+		Assert.assertEquals(1, result2.getQtyLogs(LogLevel.TRACE));
+		Assert.assertEquals(1, result2.getQtyLogs(LogLevel.DEBUG));
+		Assert.assertEquals(1, result2.getQtyLogs(LogLevel.FATAL));
+		Assert.assertEquals(1, result2.getQtyLogs(LogLevel.ERROR));
 	}
 
 	@Test

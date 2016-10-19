@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -13,6 +12,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import nl.tudelft.serg.la.JavaFile;
+import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.jdt.JDTVisitor;
 
 public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
@@ -22,8 +22,6 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	private String path;
 	private List<String> importedLines;
 	
-	private static Logger log = Logger.getLogger(LogDetectionVisitor.class);
-
 	public LogDetectionVisitor(Map<String, JavaFile> javaFilesRepo) {
 		this.javaFilesRepo = javaFilesRepo;
 		this.importedLines = new ArrayList<>();
@@ -67,13 +65,9 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		
 		if(leftExpression.equals(logVarName)) {
 			String logType = node.getName().toString();
-			
-			JavaFile javaFile = javaFilesRepo.get(path);
-			try {
-				log.debug("Found a " + logType);
-				javaFile.log(logType);
-			} catch (Exception e) {
-				log.error("this doesnt look like a log: " + logType);
+			if(LogLevel.isLogLevel(logType)) {
+				JavaFile javaFile = javaFilesRepo.get(path);
+				javaFile.log(LogLevel.valueFor(logType));
 			}
 		}
 		
