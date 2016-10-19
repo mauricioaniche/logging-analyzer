@@ -1,6 +1,8 @@
 package nl.tudelft.serg.la;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ public class LogMetricsCalculator {
 		this.javaFilesRepo = new HashMap<>();
 	}
 	
-	public void run(String path) {
+	public void run(String path, String outputFile) {
 
 		String[] srcDirs = FileUtils.getAllDirs(path);
 		String[] javaFilePaths = FileUtils.getAllJavaFiles(path);
@@ -29,6 +31,21 @@ public class LogMetricsCalculator {
 		calculateLoc(javaFilePaths);
 		runLogMetrics(srcDirs, javaFilePaths);
 		
+		writeOutput(outputFile);
+		
+	}
+
+	private void writeOutput(String outputFile) {
+		try {
+			PrintStream ps = new PrintStream(outputFile);
+			for(String filePath : javaFilesRepo.keySet()) {
+				JavaFile file = javaFilesRepo.get(filePath);
+				ps.println(file.getFullPath() + "," + file.logDensity() + "," + file.averageLoggingLevel());
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void runLogMetrics(String[] srcDirs, String[] javaFilePaths) {

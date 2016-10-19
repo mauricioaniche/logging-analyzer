@@ -37,6 +37,8 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	}
 	
 	public boolean visit(MethodInvocation node) {
+		if(node.getExpression()==null) return false;
+		
 		String leftExpression = node.getExpression().toString();
 		
 		if(leftExpression.equals(logVarName)) {

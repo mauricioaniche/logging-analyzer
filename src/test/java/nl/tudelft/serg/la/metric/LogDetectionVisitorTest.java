@@ -59,12 +59,17 @@ public class LogDetectionVisitorTest {
 		
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
-		Assert.assertEquals(0, result1.getQtyOfInfoLogs());
-		Assert.assertEquals(0, result1.getQtyOfWarnLogs());
-		Assert.assertEquals(0, result1.getQtyOfTraceLogs());
-		Assert.assertEquals(0, result1.getQtyOfDebugLogs());
-		Assert.assertEquals(0, result1.getQtyOfFatalLogs());
-		Assert.assertEquals(0, result1.getQtyOfErrorLogs());
+		Assert.assertEquals(0, result1.totalLogs());
+	}
+
+	@Test
+	public void shouldNotCrashWithSomeConstructions_3() throws IOException {
+		String path = path("logdensity", "3");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
 		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(0, result1.totalLogs());
 	}
 }
