@@ -38,9 +38,22 @@ public class LogMetricsCalculator {
 	private void writeOutput(String outputFile) {
 		try {
 			PrintStream ps = new PrintStream(outputFile);
+			ps.println("file,loc,total_logs,trace,debug,info,warn,error,fatal,log_density,avg_logging_level");
 			for(String filePath : javaFilesRepo.keySet()) {
 				JavaFile file = javaFilesRepo.get(filePath);
-				ps.println(file.getFullPath() + "," + file.logDensity() + "," + file.averageLoggingLevel());
+				ps.println(
+					file.getFullPath() + "," +
+					file.getLoc() + "," +
+					file.totalLogs() + "," +
+					file.getQtyOfTraceLogs() + "," +
+					file.getQtyOfDebugLogs() + "," +
+					file.getQtyOfInfoLogs() + "," +
+					file.getQtyOfWarnLogs() + "," +
+					file.getQtyOfErrorLogs() + "," +
+					file.getQtyOfFatalLogs() + "," +
+					file.logDensity() + "," + 
+					file.averageLoggingLevel()
+				);
 			}
 			ps.close();
 		} catch (FileNotFoundException e) {
@@ -60,6 +73,7 @@ public class LogMetricsCalculator {
 				int loc = new LOCCalculator().calculate(new FileInputStream(javaFilePath));
 				
 				JavaFile javaFile = new JavaFile(javaFilePath, loc);
+				log.info(javaFilePath + " contains " + loc + " lines of code");
 				javaFilesRepo.put(javaFilePath, javaFile);
 			} catch (Exception e) {
 				log.error("error in " + javaFilePath, e);

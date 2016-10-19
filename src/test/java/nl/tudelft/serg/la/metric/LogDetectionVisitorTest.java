@@ -50,6 +50,20 @@ public class LogDetectionVisitorTest {
 		Assert.assertEquals(1, result2.getQtyOfFatalLogs());
 		Assert.assertEquals(1, result2.getQtyOfErrorLogs());
 	}
+
+	@Test
+	public void shouldWorkForApacheLogAndSLF4J_4() throws IOException {
+		String path = path("logdensity", "4");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		JavaFile result2 = new JavaFile(path + "/Test2.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		javaFilesRepo.put(path + "/Test2.java", result2);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(7, result1.totalLogs());
+		Assert.assertEquals(7, result2.totalLogs());
+	}
 	
 	@Test
 	public void shouldIgnoreLogWhenNotLogEvenThoughNameIsLog_2() throws IOException {
@@ -72,4 +86,6 @@ public class LogDetectionVisitorTest {
 		
 		Assert.assertEquals(0, result1.totalLogs());
 	}
+	
+	// ignore logger.isDebugEnabled() and these kind of things
 }

@@ -20,8 +20,11 @@ public class JDTFileRequestor extends FileASTRequestor {
 	public void acceptAST(String sourceFilePath, 
 			CompilationUnit cu) {
 		
+		log.info("Visiting " + sourceFilePath);
+		
 		try {
 			for(JDTVisitor visitor : metrics.call()) {
+				log.info("Applying " + visitor.getClass().getName());
 				visitor.execute(cu, sourceFilePath);
 			}
 		} catch(Exception e) {

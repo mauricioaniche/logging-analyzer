@@ -42,8 +42,9 @@ public class JDTRunner {
 		List<List<String>> partitions = Lists.partition(Arrays.asList(javaFiles), MAX_AT_ONCE);
 		log.info("Max partition size: " + MAX_AT_ONCE + ", total partitions=" + partitions.size());
 
+		int count = 0;
 		for(List<String> partition : partitions) {
-			log.info("Next partition");
+			log.info("Next partition " + ++count);
 			ASTParser parser = ASTParser.newParser(AST.JLS8);
 			
 			parser.setResolveBindings(resolveBindings);
