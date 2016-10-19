@@ -1,0 +1,70 @@
+package nl.tudelft.serg.la.metric;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import nl.tudelft.serg.la.JavaFile;
+import nl.tudelft.serg.la.jdt.JDTRunner;
+
+public class LogDensityVisitorTest {
+
+	private Map<String, JavaFile> javaFilesRepo;
+
+	@Before
+	public void setUp() throws IOException {
+		this.javaFilesRepo = new HashMap<>();
+	}
+
+	private String path(String test, String subfolder) throws IOException {
+		return new File(this.getClass().getResource("/").getPath() + "../../src/test/java-test-files/" + test + "/" + subfolder).getCanonicalPath();
+	}
+	
+	@Test
+	public void shouldCountLogInstructions_1() throws IOException {
+		String path = path("logdensity", "1");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		JavaFile result2 = new JavaFile(path + "/Test2.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		javaFilesRepo.put(path + "/Test2.java", result2);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDensityVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(2, result1.getQtyOfInfoLogs());
+		Assert.assertEquals(1, result1.getQtyOfWarnLogs());
+		Assert.assertEquals(1, result1.getQtyOfTraceLogs());
+		Assert.assertEquals(1, result1.getQtyOfDebugLogs());
+		Assert.assertEquals(1, result1.getQtyOfFatalLogs());
+		Assert.assertEquals(1, result1.getQtyOfErrorLogs());
+
+		Assert.assertEquals(2, result2.getQtyOfInfoLogs());
+		Assert.assertEquals(1, result2.getQtyOfWarnLogs());
+		Assert.assertEquals(1, result2.getQtyOfTraceLogs());
+		Assert.assertEquals(1, result2.getQtyOfDebugLogs());
+		Assert.assertEquals(1, result2.getQtyOfFatalLogs());
+		Assert.assertEquals(1, result2.getQtyOfErrorLogs());
+	}
+	
+	@Test
+	public void shouldIgnoreLogWhenNotLogEvenThoughNameIsLog_2() throws IOException {
+		String path = path("logdensity", "2");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDensityVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(0, result1.getQtyOfInfoLogs());
+		Assert.assertEquals(0, result1.getQtyOfWarnLogs());
+		Assert.assertEquals(0, result1.getQtyOfTraceLogs());
+		Assert.assertEquals(0, result1.getQtyOfDebugLogs());
+		Assert.assertEquals(0, result1.getQtyOfFatalLogs());
+		Assert.assertEquals(0, result1.getQtyOfErrorLogs());
+		
+	}
+}
