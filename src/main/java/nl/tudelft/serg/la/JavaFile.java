@@ -1,20 +1,24 @@
 package nl.tudelft.serg.la;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class JavaFile {
 
 	private String fullPath;
 	private int loc;
-	private int qtyOfTraceLogs;
-	private int qtyOfDebugLogs;
-	private int qtyOfInfoLogs;
-	private int qtyOfWarnLogs;
-	private int qtyOfErrorLogs;
-	private int qtyOfFatalLogs;
+	private Map<String, Integer> qtyOfLogs;
 	
 	public JavaFile(String fullPath, int loc) {
-		super();
 		this.fullPath = fullPath;
 		this.loc = loc;
+		this.qtyOfLogs = new HashMap<>();
+		qtyOfLogs.put("INFO", 0);
+		qtyOfLogs.put("ERROR", 0);
+		qtyOfLogs.put("DEBUG", 0);
+		qtyOfLogs.put("TRACE", 0);
+		qtyOfLogs.put("WARN", 0);
+		qtyOfLogs.put("FATAL", 0);
 	}
 	
 	public String getFullPath() {
@@ -26,39 +30,35 @@ public class JavaFile {
 	}
 
 	public int getQtyOfTraceLogs() {
-		return qtyOfTraceLogs;
+		return qtyOfLogs.get("TRACE");
 	}
 
 	public int getQtyOfDebugLogs() {
-		return qtyOfDebugLogs;
+		return qtyOfLogs.get("DEBUG");
 	}
 
 	public int getQtyOfInfoLogs() {
-		return qtyOfInfoLogs;
+		return qtyOfLogs.get("INFO");
 	}
 
 	public int getQtyOfWarnLogs() {
-		return qtyOfWarnLogs;
+		return qtyOfLogs.get("WARN");
 	}
 
 	public int getQtyOfErrorLogs() {
-		return qtyOfErrorLogs;
+		return qtyOfLogs.get("ERROR");
 	}
 
 	public int getQtyOfFatalLogs() {
-		return qtyOfFatalLogs;
+		return qtyOfLogs.get("FATAL");
 	}
 
 	public void log(String logType) {
 		logType = logType.toUpperCase();
-		if(logType.equals("TRACE")) qtyOfTraceLogs++;
-		else if(logType.equals("DEBUG")) qtyOfDebugLogs++;
-		else if(logType.equals("INFO")) qtyOfInfoLogs++;
-		else if(logType.equals("WARN")) qtyOfWarnLogs++;
-		else if(logType.equals("ERROR")) qtyOfErrorLogs++;
-		else if(logType.equals("FATAL")) qtyOfFatalLogs++;
-		else throw new IllegalArgumentException("type of log not recognizable: " + logType);
-		
+		if(!qtyOfLogs.containsKey(logType))
+			throw new IllegalArgumentException("type of log not recognizable: " + logType);
+
+		qtyOfLogs.put(logType, qtyOfLogs.get(logType)+1);
 	}
 
 	public double logDensity() {
@@ -66,7 +66,7 @@ public class JavaFile {
 	}
 
 	private int totalLogs() {
-		return qtyOfTraceLogs + qtyOfDebugLogs + qtyOfInfoLogs + qtyOfWarnLogs + qtyOfErrorLogs + qtyOfFatalLogs;
+		return qtyOfLogs.values().stream().mapToInt(i -> i.intValue()).sum();
 	}	
 	
 }

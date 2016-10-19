@@ -11,13 +11,13 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.jdt.JDTVisitor;
 
-public class LogDensityVisitor extends ASTVisitor implements JDTVisitor {
+public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 
 	private Map<String, JavaFile> javaFilesRepo;
 	private String logVarName = null;
 	private String path;
 
-	public LogDensityVisitor(Map<String, JavaFile> javaFilesRepo) {
+	public LogDetectionVisitor(Map<String, JavaFile> javaFilesRepo) {
 		this.javaFilesRepo = javaFilesRepo;
 	}
 

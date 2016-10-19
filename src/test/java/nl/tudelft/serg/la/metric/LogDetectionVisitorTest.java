@@ -13,7 +13,7 @@ import org.junit.Test;
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.jdt.JDTRunner;
 
-public class LogDensityVisitorTest {
+public class LogDetectionVisitorTest {
 
 	private Map<String, JavaFile> javaFilesRepo;
 
@@ -34,7 +34,7 @@ public class LogDensityVisitorTest {
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		javaFilesRepo.put(path + "/Test2.java", result2);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDensityVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(2, result1.getQtyOfInfoLogs());
 		Assert.assertEquals(1, result1.getQtyOfWarnLogs());
@@ -57,7 +57,7 @@ public class LogDensityVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDensityVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(0, result1.getQtyOfInfoLogs());
 		Assert.assertEquals(0, result1.getQtyOfWarnLogs());

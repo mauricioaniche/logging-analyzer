@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import nl.tudelft.serg.la.jdt.FileUtils;
 import nl.tudelft.serg.la.jdt.JDTRunner;
 import nl.tudelft.serg.la.metric.LOCCalculator;
-import nl.tudelft.serg.la.metric.LogDensityVisitor;
+import nl.tudelft.serg.la.metric.LogDetectionVisitor;
 
 public class LogMetricsCalculator {
 
@@ -33,7 +33,7 @@ public class LogMetricsCalculator {
 
 	private void runLogMetrics(String[] srcDirs, String[] javaFilePaths) {
 		new JDTRunner(true, true).run(srcDirs, javaFilePaths, 
-			() -> Arrays.asList(new LogDensityVisitor(javaFilesRepo)));
+			() -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 	}
 
 	private void calculateLoc(String[] javaFilePaths) {
