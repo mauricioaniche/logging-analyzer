@@ -18,30 +18,45 @@ public class LogMetricsCalculator {
 
 	private Map<String, JavaFile> javaFilesRepo;
 	private static Logger log = Logger.getLogger(LogMetricsCalculator.class);
+	private String outputDir;
+	private String path;
+	private String projectName;
+	private String[] srcDirs;
+	private String[] javaFilePaths;
 	
-	public LogMetricsCalculator() {
+	public LogMetricsCalculator(String path, String outputDir) {
+		this.path = path;
+		this.outputDir = outputDir;
 		this.javaFilesRepo = new HashMap<>();
+
+		this.projectName = extractProjectNameFromFolder(path);
+		this.srcDirs = FileUtils.getAllDirs(path);
+		this.javaFilePaths = FileUtils.getAllJavaFiles(path);
 	}
 	
-	public void run(String path, String outputFile) {
+	public void run() {
 
-		String[] srcDirs = FileUtils.getAllDirs(path);
-		String[] javaFilePaths = FileUtils.getAllJavaFiles(path);
+		calculateLoc();
+		runLogMetrics();
 		
-		calculateLoc(javaFilePaths);
-		runLogMetrics(srcDirs, javaFilePaths);
-		
-		writeOutput(outputFile);
+		writeProductMetricsOutput();
 		
 	}
 
-	private void writeOutput(String outputFile) {
+	private String extractProjectNameFromFolder(String path) {
+		if(path.endsWith("/")) path = path.substring(0, path.length()-2);
+		path = "/" + path;
+		return path.substring(path.lastIndexOf("/")+1);
+	}
+
+	private void writeProductMetricsOutput() {
 		try {
-			PrintStream ps = new PrintStream(outputFile);
-			ps.println("file,loc,total_logs,trace,debug,info,warn,error,fatal,log_density,avg_logging_level");
+			PrintStream ps = new PrintStream(outputDir + projectName + "-log-product-metrics.csv");
+			ps.println("project,file,loc,total_logs,trace,debug,info,warn,error,fatal,log_density,avg_logging_level");
 			for(String filePath : javaFilesRepo.keySet()) {
 				JavaFile file = javaFilesRepo.get(filePath);
 				ps.println(
+					projectName + "," +
 					file.getFullPath() + "," +
 					file.getLoc() + "," +
 					file.totalLogs() + "," +
@@ -61,12 +76,12 @@ public class LogMetricsCalculator {
 		}
 	}
 
-	private void runLogMetrics(String[] srcDirs, String[] javaFilePaths) {
+	private void runLogMetrics() {
 		new JDTRunner(true, true).run(srcDirs, javaFilePaths, 
 			() -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 	}
 
-	private void calculateLoc(String[] javaFilePaths) {
+	private void calculateLoc() {
 		for(String javaFilePath : javaFilePaths) {
 			
 			try {
