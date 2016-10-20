@@ -50,7 +50,7 @@ public class LogMetricsCalculator {
 
 	private void writeLogPositionOutput() {
 		try {
-			PrintStream ps = new PrintStream(outputDir + projectName + "-java-types.csv");
+			PrintStream ps = new PrintStream(outputDir + projectName + "-logs.csv");
 			ps.println("project,file,class_name,type");
 			for(String filePath : javaFilesRepo.keySet()) {
 				JavaFile file = javaFilesRepo.get(filePath);
