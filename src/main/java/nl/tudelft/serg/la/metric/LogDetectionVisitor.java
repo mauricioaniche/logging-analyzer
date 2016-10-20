@@ -35,6 +35,8 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	private String path;
 	private List<String> importedLines;
 	private Stack<String> position;
+
+	private CompilationUnit cu;
 	
 	public LogDetectionVisitor(Map<String, JavaFile> javaFilesRepo) {
 		this.javaFilesRepo = javaFilesRepo;
@@ -44,6 +46,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 
 	@Override
 	public void execute(CompilationUnit cu, String path) {
+		this.cu = cu;
 		this.path = path;
 		cu.accept(this);
 	}
@@ -181,11 +184,16 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			if(LogLevel.isLogLevel(logType)) {
 				JavaFile javaFile = javaFilesRepo.get(path);
 				
-				javaFile.log(new LogLine(LogLevel.valueFor(logType), currentPosition()));
+				javaFile.log(new LogLine(LogLevel.valueFor(logType), currentPosition(), lineNumber(node)));
 			}
 		}
 		
 		return true;
+	}
+
+	private int lineNumber(MethodInvocation node) {
+		int lineNumber = cu.getLineNumber(node.getStartPosition());
+		return lineNumber;
 	}
 
 	private String currentPosition() {

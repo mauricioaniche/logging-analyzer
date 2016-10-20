@@ -10,6 +10,8 @@ public class JavaFile {
 	private String fullPath;
 	private int loc;
 	private Map<LogLevel, List<LogLine>> qtyOfLogs;
+	private String className;
+	private String type;
 	
 	public JavaFile(String fullPath, int loc) {
 		this.fullPath = fullPath;
@@ -59,6 +61,19 @@ public class JavaFile {
 		}
 		
 		return weight / (double) totalLogs();
-	}	
+	}
+
+	public void setClassInfo(String className, String type) {
+		this.className = className;
+		this.type = type;
+	}
+	
+	public String getClassName() {
+		return className;
+	}
+
+	public String getType() {
+		return type;
+	}
 	
 }

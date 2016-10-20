@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import nl.tudelft.serg.la.jdt.FileUtils;
 import nl.tudelft.serg.la.jdt.JDTRunner;
+import nl.tudelft.serg.la.metric.ClassInfo;
 import nl.tudelft.serg.la.metric.LOCCalculator;
 import nl.tudelft.serg.la.metric.LogDetectionVisitor;
 
@@ -36,14 +37,57 @@ public class LogMetricsCalculator {
 	
 	public void run() {
 
-		log.info("Parsing " + path);
+		log.info("Parsing project at " + path);
 		
 		calculateLoc();
 		runLogMetrics();
 		
-		// filter interfaces
+		writeJavaTypesOutput();
 		writeProductMetricsOutput();
+		writeLogPositionOutput();
 		
+	}
+
+	private void writeLogPositionOutput() {
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-java-types.csv");
+			ps.println("project,file,class_name,type");
+			for(String filePath : javaFilesRepo.keySet()) {
+				JavaFile file = javaFilesRepo.get(filePath);
+				
+				for(LogLine line : file.getAllLogs()) {
+					ps.println(
+						projectName + "," +
+						line.getLineNumber() + ","+
+						file.getFullPath() + "," +
+						line.getLevel() + "," +
+						line.getPosition()
+					);
+				}
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void writeJavaTypesOutput() {
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-java-types.csv");
+			ps.println("project,file,class_name,type");
+			for(String filePath : javaFilesRepo.keySet()) {
+				JavaFile file = javaFilesRepo.get(filePath);
+				ps.println(
+					projectName + "," +
+					file.getFullPath() + "," +
+					file.getClassName() + "," + 
+					file.getType()
+				);
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private String extractProjectNameFromFolder(String path) {
@@ -81,7 +125,7 @@ public class LogMetricsCalculator {
 
 	private void runLogMetrics() {
 		new JDTRunner(true, true).run(srcDirs, javaFilePaths, 
-			() -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+			() -> Arrays.asList(new ClassInfo(javaFilesRepo), new LogDetectionVisitor(javaFilesRepo)));
 	}
 
 	private void calculateLoc() {

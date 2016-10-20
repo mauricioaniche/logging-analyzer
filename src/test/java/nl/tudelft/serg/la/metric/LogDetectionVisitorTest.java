@@ -124,6 +124,20 @@ public class LogDetectionVisitorTest {
 		Assert.assertEquals(1, allLogs.size());
 		Assert.assertEquals("for", allLogs.get(0).getPosition());
 	}
+
+	@Test
+	public void lineNumbers_8() throws IOException {
+		String path = path("logdensity", "8");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		List<LogLine> allLogs = result1.getAllLogs();
+		Assert.assertEquals(2, allLogs.size());
+		Assert.assertTrue(allLogs.stream().anyMatch(l -> l.getLineNumber() == 11));
+		Assert.assertTrue(allLogs.stream().anyMatch(l -> l.getLineNumber() == 12));
+	}
 	
 	
 	
