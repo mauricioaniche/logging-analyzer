@@ -36,9 +36,12 @@ public class LogMetricsCalculator {
 	
 	public void run() {
 
+		log.info("Parsing " + path);
+		
 		calculateLoc();
 		runLogMetrics();
 		
+		// filter interfaces
 		writeProductMetricsOutput();
 		
 	}

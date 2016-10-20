@@ -29,27 +29,27 @@ public class JavaFileTest {
 	
 	private JavaFile fileWithManyLogs() {
 		JavaFile file = new JavaFile("SomeClass.java", 100);
-		file.log(LogLevel.INFO);
-		file.log(LogLevel.WARN);
-		file.log(LogLevel.WARN);
-		file.log(LogLevel.DEBUG);
-		file.log(LogLevel.DEBUG);
-		file.log(LogLevel.DEBUG);
-		file.log(LogLevel.FATAL);
-		file.log(LogLevel.FATAL);
-		file.log(LogLevel.FATAL);
-		file.log(LogLevel.FATAL);
-		file.log(LogLevel.TRACE);
-		file.log(LogLevel.TRACE);
-		file.log(LogLevel.TRACE);
-		file.log(LogLevel.TRACE);
-		file.log(LogLevel.TRACE);
-		file.log(LogLevel.ERROR);
-		file.log(LogLevel.ERROR);
-		file.log(LogLevel.ERROR);
-		file.log(LogLevel.ERROR);
-		file.log(LogLevel.ERROR);
-		file.log(LogLevel.ERROR);
+		file.log(new LogLine(LogLevel.INFO, "method"));
+		file.log(new LogLine(LogLevel.WARN, "method"));
+		file.log(new LogLine(LogLevel.WARN, "method"));
+		file.log(new LogLine(LogLevel.DEBUG, "method"));
+		file.log(new LogLine(LogLevel.DEBUG, "method"));
+		file.log(new LogLine(LogLevel.DEBUG, "method"));
+		file.log(new LogLine(LogLevel.FATAL, "method"));
+		file.log(new LogLine(LogLevel.FATAL, "method"));
+		file.log(new LogLine(LogLevel.FATAL, "method"));
+		file.log(new LogLine(LogLevel.FATAL, "method"));
+		file.log(new LogLine(LogLevel.TRACE, "method"));
+		file.log(new LogLine(LogLevel.TRACE, "method"));
+		file.log(new LogLine(LogLevel.TRACE, "method"));
+		file.log(new LogLine(LogLevel.TRACE, "method"));
+		file.log(new LogLine(LogLevel.TRACE, "method"));
+		file.log(new LogLine(LogLevel.ERROR, "method"));
+		file.log(new LogLine(LogLevel.ERROR, "method"));
+		file.log(new LogLine(LogLevel.ERROR, "method"));
+		file.log(new LogLine(LogLevel.ERROR, "method"));
+		file.log(new LogLine(LogLevel.ERROR, "method"));
+		file.log(new LogLine(LogLevel.ERROR, "method"));
 		return file;
 	}
 }

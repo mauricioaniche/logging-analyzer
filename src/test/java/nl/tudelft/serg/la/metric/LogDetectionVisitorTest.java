@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
+import nl.tudelft.serg.la.LogLine;
 import nl.tudelft.serg.la.jdt.JDTRunner;
 
 public class LogDetectionVisitorTest {
@@ -88,5 +90,41 @@ public class LogDetectionVisitorTest {
 		Assert.assertEquals(0, result1.totalLogs());
 	}
 	
-	// ignore logger.isDebugEnabled() and these kind of things
+	
+	
+	@Test
+	public void shouldGetThePositionOfTheLog_6() throws IOException {
+		String path = path("logdensity", "6");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+
+		List<LogLine> allLogs = result1.getAllLogs();
+		Assert.assertEquals(9, allLogs.size());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("if")).count());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("else")).count());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("for")).count());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("method")).count());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("foreach")).count());
+		Assert.assertEquals(2, allLogs.stream().filter(l -> l.getPosition().equals("switch")).count());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("while")).count());
+		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("do-while")).count());
+	}
+	
+	@Test
+	public void shouldCaptureTheDeeperStructure_7() throws IOException {
+		String path = path("logdensity", "7");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		List<LogLine> allLogs = result1.getAllLogs();
+		Assert.assertEquals(1, allLogs.size());
+		Assert.assertEquals("for", allLogs.get(0).getPosition());
+	}
+	
+	
+	
 }
