@@ -108,11 +108,11 @@ public class LogMetricsCalculator {
 					file.getLoc() + "," +
 					file.totalLogs() + "," +
 					file.getQtyLogs(LogLevel.TRACE) + "," +
-					file.getQtyLogs(LogLevel.TRACE) + "," +
-					file.getQtyLogs(LogLevel.TRACE) + "," +
-					file.getQtyLogs(LogLevel.TRACE) + "," +
-					file.getQtyLogs(LogLevel.TRACE) + "," +
-					file.getQtyLogs(LogLevel.TRACE) + "," +
+					file.getQtyLogs(LogLevel.DEBUG) + "," +
+					file.getQtyLogs(LogLevel.INFO) + "," +
+					file.getQtyLogs(LogLevel.WARN) + "," +
+					file.getQtyLogs(LogLevel.ERROR) + "," +
+					file.getQtyLogs(LogLevel.FATAL) + "," +
 					file.logDensity() + "," + 
 					file.averageLoggingLevel()
 				);
