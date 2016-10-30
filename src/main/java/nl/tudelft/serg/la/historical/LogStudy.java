@@ -10,11 +10,13 @@ public class LogStudy implements Study {
 	private String path;
 	private HistoricalLogVisitor visitor1;
 	private CommitInfoVisitor visitor2;
+	private BugVisitor visitor3;
 	
-	public LogStudy(String path, HistoricalLogVisitor visitor1, CommitInfoVisitor visitor2) {
+	public LogStudy(String path, HistoricalLogVisitor visitor1, CommitInfoVisitor visitor2, BugVisitor visitor3) {
 		this.path = path;
 		this.visitor1 = visitor1;
 		this.visitor2 = visitor2;
+		this.visitor3 = visitor3;
 		
 	}
 	@Override
@@ -24,6 +26,7 @@ public class LogStudy implements Study {
 			.through(Commits.all())
 			.process(visitor1)
 			.process(visitor2)
+			.process(visitor3)
 			.mine();
 	}
 	

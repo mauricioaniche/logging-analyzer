@@ -25,8 +25,9 @@ public class HistoricalMetricsCalculator {
 	public void run() {
 		HistoricalLogVisitor visitor1 = new HistoricalLogVisitor();
 		CommitInfoVisitor visitor2 = new CommitInfoVisitor();
+		BugVisitor visitor3 = new BugVisitor();
 		
-		LogStudy study = new LogStudy(path, visitor1, visitor2);
+		LogStudy study = new LogStudy(path, visitor1, visitor2, visitor3);
 		new RepoDriller().start(study);
 
 		Map<String, HistoricFile> files = visitor1.getFiles();
@@ -34,6 +35,8 @@ public class HistoricalMetricsCalculator {
 		
 		printLogMetrics(files, dates);
 		printLogLevelChanges(files, dates);
+		printAuthors(files, visitor2);
+		printBugs(files, visitor2, visitor3);
 		
 	}
 
@@ -58,6 +61,48 @@ public class HistoricalMetricsCalculator {
 						logAnalysisResult.getLogUpdates()
 					);
 				}
+			}
+			
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+	private void printAuthors(Map<String, HistoricFile> files, CommitInfoVisitor visitor2) {
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-commit-authors.csv");
+			ps.println("project,commit,date,author");
+			
+			for(String commit : visitor2.getCommits()) {
+				ps.println(
+					projectName + "," +
+					commit + "," +
+					visitor2.getDates().get(commit) + "," +
+					visitor2.getAuthors().get(commit)
+				);
+			}
+			
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+	private void printBugs(Map<String, HistoricFile> files, CommitInfoVisitor visitor2, BugVisitor bugs) {
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-commit-bugs.csv");
+			ps.println("project,commit,date,bug");
+			
+			for(String commit : bugs.getBugs().keySet()) {
+				ps.println(
+					projectName + "," +
+					commit + "," +
+					visitor2.getDates().get(commit) + "," +
+					bugs.getBugs().get(commit)
+				);
 			}
 			
 			ps.close();

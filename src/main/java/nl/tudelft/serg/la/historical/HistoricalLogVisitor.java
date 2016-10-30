@@ -37,7 +37,7 @@ public class HistoricalLogVisitor implements CommitVisitor {
 			
 			LogDiffAnalyzer analyzer = new LogDiffAnalyzer();
 			LogAnalysisResult result = analyzer.analyze(m.getDiff());
-			file.committed(commit.getHash(), commit.getDate(), commit.getAuthor().getEmail(), result);
+			file.committed(commit.getHash(), commit.getDate(), result);
 			
 		}
 	}

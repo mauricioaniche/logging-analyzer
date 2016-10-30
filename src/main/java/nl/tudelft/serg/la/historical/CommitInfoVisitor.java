@@ -1,7 +1,9 @@
 package nl.tudelft.serg.la.historical;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.repodriller.domain.Commit;
@@ -12,14 +14,20 @@ import org.repodriller.scm.SCMRepository;
 public class CommitInfoVisitor implements CommitVisitor{
 
 	private Map<String, Calendar> dates;
+	private Map<String, String> authors;
+	private List<String> commits;
 	
 	public CommitInfoVisitor() {
 		dates = new HashMap<>();
+		authors = new HashMap<>();
+		commits = new ArrayList<>();
 	}
 	
 	@Override
 	public void process(SCMRepository repo, Commit commit, PersistenceMechanism writer) {
 		dates.put(commit.getHash(), commit.getDate());
+		authors.put(commit.getHash(), commit.getAuthor().getEmail());
+		commits.add(commit.getHash());
 	}
 
 	@Override
@@ -31,4 +39,11 @@ public class CommitInfoVisitor implements CommitVisitor{
 		return dates;
 	}
 
+	public Map<String, String> getAuthors() {
+		return authors;
+	}
+	
+	public List<String> getCommits() {
+		return commits;
+	}
 }
