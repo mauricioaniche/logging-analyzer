@@ -9,8 +9,22 @@
         </layout>
     </appender>
 
+    <category name="nl.tudelft">
+        <priority value="INFO"/>
+        <appender-ref ref="main"/>
+    </category>
 
-    <category name="nl.tudelft.serg">
+    <category name="org.apache">
+        <priority value="WARN"/>
+        <appender-ref ref="main"/>
+    </category>
+
+    <category name="org.repodriller">
+        <priority value="INFO"/>
+        <appender-ref ref="main"/>
+    </category>
+
+    <category name="/">
         <priority value="INFO"/>
         <appender-ref ref="main"/>
     </category>
