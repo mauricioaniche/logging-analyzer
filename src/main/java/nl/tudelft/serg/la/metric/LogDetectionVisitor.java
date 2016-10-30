@@ -13,17 +13,22 @@ import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
-import nl.tudelft.serg.la.LogLine;
+import nl.tudelft.serg.la.LogMessage;
+import nl.tudelft.serg.la.LogStatement;
 import nl.tudelft.serg.la.jdt.JDTVisitor;
 
 public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
@@ -184,11 +189,56 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			if(LogLevel.isLogLevel(logType)) {
 				JavaFile javaFile = javaFilesRepo.get(path);
 				
-				javaFile.log(new LogLine(LogLevel.valueFor(logType), currentPosition(), lineNumber(node)));
+				LogMessage message = new LogMessage();
+				if(!node.arguments().isEmpty()) {
+					resolveArgumentsInMessage(message, node, node.arguments().get(0));
+					if(node.arguments().size()>1 && node.arguments().get(1)!=null) {
+						resolveArgumentsInMessage(message, node, node.arguments().get(1));
+					}
+				}
+				javaFile.log(new LogStatement(LogLevel.valueFor(logType), currentPosition(), lineNumber(node), message));
 			}
 		}
 		
 		return true;
+	}
+
+	private void resolveArgumentsInMessage(LogMessage current, MethodInvocation node, Object object) {
+		
+		if(object == null) return ;
+		
+		if(object instanceof InfixExpression) {
+			InfixExpression exp = (InfixExpression) object; 
+			resolveArgumentsInMessage(current, node, exp.getLeftOperand());
+			resolveArgumentsInMessage(current, node, exp.getRightOperand());
+			if(exp.extendedOperands()!=null) {
+				for(Object o : exp.extendedOperands()) {
+					resolveArgumentsInMessage(current, node, o);
+				}
+			}
+		}
+		else if(object instanceof StringLiteral) {
+			StringLiteral literal = (StringLiteral) object;
+			current.addString(literal.getLiteralValue().length());
+		}
+		else if(object instanceof SimpleName) {
+			SimpleName var = (SimpleName) object;
+			IBinding binding = var.resolveBinding();
+			if(binding!=null) {
+				String type = binding.toString().split(" ")[0];
+				if(isException(type)) {
+					current.addException(type);
+				} else {
+					current.addVar(var);
+				}
+						
+			}
+		}
+	
+	}
+
+	private boolean isException(String type) {
+		return type.contains("Exception") || type.contains("Error"); 
 	}
 
 	private int lineNumber(MethodInvocation node) {

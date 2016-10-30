@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
-import nl.tudelft.serg.la.LogLine;
+import nl.tudelft.serg.la.LogStatement;
 import nl.tudelft.serg.la.jdt.JDTRunner;
 
 public class LogDetectionVisitorTest {
@@ -100,7 +100,7 @@ public class LogDetectionVisitorTest {
 		
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 
-		List<LogLine> allLogs = result1.getAllLogs();
+		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(9, allLogs.size());
 		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("if")).count());
 		Assert.assertEquals(1, allLogs.stream().filter(l -> l.getPosition().equals("else")).count());
@@ -120,7 +120,7 @@ public class LogDetectionVisitorTest {
 		
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
-		List<LogLine> allLogs = result1.getAllLogs();
+		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(1, allLogs.size());
 		Assert.assertEquals("for", allLogs.get(0).getPosition());
 	}
@@ -133,10 +133,42 @@ public class LogDetectionVisitorTest {
 		
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
-		List<LogLine> allLogs = result1.getAllLogs();
+		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(2, allLogs.size());
 		Assert.assertTrue(allLogs.stream().anyMatch(l -> l.getLineNumber() == 11));
 		Assert.assertTrue(allLogs.stream().anyMatch(l -> l.getLineNumber() == 12));
+	}
+	
+	@Test
+	public void extractQtyOfVariables_9() throws IOException {
+		String path = path("logdensity", "9");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		List<LogStatement> allLogs = result1.getAllLogs();
+		Assert.assertEquals(1, allLogs.size());
+		Assert.assertEquals(2, allLogs.get(0).getMessage().getQtyOfStrings());
+		Assert.assertEquals(11, allLogs.get(0).getMessage().getStringsLength());
+		Assert.assertEquals(2, allLogs.get(0).getMessage().getQtyOfVariables());
+	}
+
+	@Test
+	public void extractException() throws IOException {
+		String path = path("logdensity", "10");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		List<LogStatement> allLogs = result1.getAllLogs();
+		Assert.assertEquals(1, allLogs.size());
+		Assert.assertEquals(2, allLogs.get(0).getMessage().getQtyOfStrings());
+		Assert.assertEquals(11, allLogs.get(0).getMessage().getStringsLength());
+		Assert.assertEquals(2, allLogs.get(0).getMessage().getQtyOfVariables());
+		Assert.assertTrue(allLogs.get(0).getMessage().hasException());
+		Assert.assertEquals("IOException", allLogs.get(0).getMessage().getExceptionType());
 	}
 	
 	

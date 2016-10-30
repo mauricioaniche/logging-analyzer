@@ -9,7 +9,7 @@ public class JavaFile {
 
 	private String fullPath;
 	private int loc;
-	private Map<LogLevel, List<LogLine>> qtyOfLogs;
+	private Map<LogLevel, List<LogStatement>> qtyOfLogs;
 	private String className;
 	private String type;
 	
@@ -35,13 +35,13 @@ public class JavaFile {
 		return qtyOfLogs.get(level).size();
 	}
 	
-	public List<LogLine> getAllLogs() {
-		List<LogLine> combined = new ArrayList<>();
+	public List<LogStatement> getAllLogs() {
+		List<LogStatement> combined = new ArrayList<>();
 		qtyOfLogs.values().forEach(list -> combined.addAll(list));
 		return combined;
 	}
 
-	public void log(LogLine logLine) {
+	public void log(LogStatement logLine) {
 		LogLevel level = logLine.getLevel();
 		qtyOfLogs.get(level).add(logLine);
 	}

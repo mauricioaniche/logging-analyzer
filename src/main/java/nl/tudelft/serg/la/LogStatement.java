@@ -1,17 +1,27 @@
 package nl.tudelft.serg.la;
 
-public class LogLine {
+public class LogStatement {
 
 	private LogLevel level;
 	private String position;
 	private int lineNumber;
+	private LogMessage message;
 	
-	public LogLine(LogLevel level, String position, int lineNumber) {
+	public LogStatement(LogLevel level, String position, int lineNumber, LogMessage message) {
 		this.level = level;
 		this.position = position;
 		this.lineNumber = lineNumber;
+		this.message = message;
 	}
 
+	public LogStatement(LogLevel level, String position, int lineNumber) {
+		this(level, position, lineNumber, new LogMessage());
+	}
+
+	public LogMessage getMessage() {
+		return message;
+	}
+	
 	public LogLevel getLevel() {
 		return level;
 	}
@@ -26,7 +36,8 @@ public class LogLine {
 
 	@Override
 	public String toString() {
-		return "LogLine [level=" + level + ", position=" + position + ", lineNumber=" + lineNumber + "]";
+		return "LogStatement [level=" + level + ", position=" + position + ", lineNumber=" + lineNumber + ", message="
+				+ message + "]";
 	}
 
 	@Override
@@ -35,6 +46,7 @@ public class LogLine {
 		int result = 1;
 		result = prime * result + ((level == null) ? 0 : level.hashCode());
 		result = prime * result + lineNumber;
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
 		result = prime * result + ((position == null) ? 0 : position.hashCode());
 		return result;
 	}
@@ -47,10 +59,15 @@ public class LogLine {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LogLine other = (LogLine) obj;
+		LogStatement other = (LogStatement) obj;
 		if (level != other.level)
 			return false;
 		if (lineNumber != other.lineNumber)
+			return false;
+		if (message == null) {
+			if (other.message != null)
+				return false;
+		} else if (!message.equals(other.message))
 			return false;
 		if (position == null) {
 			if (other.position != null)
@@ -59,5 +76,7 @@ public class LogLine {
 			return false;
 		return true;
 	}
+
+
 	
 }
