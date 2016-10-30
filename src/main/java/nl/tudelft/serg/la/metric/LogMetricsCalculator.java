@@ -1,4 +1,4 @@
-package nl.tudelft.serg.la;
+package nl.tudelft.serg.la.metric;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,11 +9,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import nl.tudelft.serg.la.JavaFile;
+import nl.tudelft.serg.la.LogLevel;
+import nl.tudelft.serg.la.LogStatement;
 import nl.tudelft.serg.la.jdt.FileUtils;
 import nl.tudelft.serg.la.jdt.JDTRunner;
-import nl.tudelft.serg.la.metric.ClassInfo;
-import nl.tudelft.serg.la.metric.LOCCalculator;
-import nl.tudelft.serg.la.metric.LogDetectionVisitor;
 
 public class LogMetricsCalculator {
 
@@ -146,5 +146,9 @@ public class LogMetricsCalculator {
 				log.error("error in " + javaFilePath, e);
 			}
 		}
+	}
+	
+	public Map<String, JavaFile> getJavaFilesRepo() {
+		return javaFilesRepo;
 	}
 }

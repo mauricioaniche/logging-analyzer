@@ -70,6 +70,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+		    <groupId>org.repodriller</groupId>
+		    <artifactId>repodriller</artifactId>
+		    <version>1.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
