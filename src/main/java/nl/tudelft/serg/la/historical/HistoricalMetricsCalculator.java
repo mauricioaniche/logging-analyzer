@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.repodriller.RepoDriller;
 
 import nl.tudelft.serg.la.LogLevel;
@@ -16,6 +17,8 @@ public class HistoricalMetricsCalculator {
 	private String path;
 	private String outputDir;
 	private String projectName;
+	
+	private static Logger log = Logger.getLogger(HistoricalMetricsCalculator.class);
 
 	public HistoricalMetricsCalculator(String path, String outputDir) {
 		this.path = path;
@@ -140,7 +143,7 @@ public class HistoricalMetricsCalculator {
 	private void printLogLevelChanges(Map<String, HistoricFile> files, Map<String, Calendar> dates) {
 		try {
 			PrintStream ps = new PrintStream(outputDir + projectName + "-log-level-changes.csv");
-			ps.println("project,file,commit,date,change,direction");
+			ps.println("project,file,commit,date,from_level,to_level,direction");
 			
 			for(String file : files.keySet()) {
 				HistoricFile hf = files.get(file);
@@ -149,12 +152,19 @@ public class HistoricalMetricsCalculator {
 					LogAnalysisResult logAnalysisResult = hf.getLogEvolution().get(commit);
 
 					for(String change : logAnalysisResult.getLevelChanges()) {
+						String[] changeTwoParts = change.split(" -> ");
+						if(changeTwoParts.length!=2) {
+							log.error("wrong log level change: " + change + " in file " + file);
+							continue;
+						}
+						
 						ps.println(
 							projectName + "," +
 							file + "," +
 							commit + "," +
 							new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dates.get(commit).getTime()) + ","+
-							change + "," +
+							changeTwoParts[0] + "," +
+							changeTwoParts[1] + "," +
 							direction(change)
 						);
 					}
