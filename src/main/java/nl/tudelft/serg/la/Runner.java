@@ -1,14 +1,21 @@
 package nl.tudelft.serg.la;
 
-import nl.tudelft.serg.la.historical.HistoricalLog;
+import nl.tudelft.serg.la.historical.HistoricalMetricsCalculator;
 import nl.tudelft.serg.la.metric.LogMetricsCalculator;
 
 public class Runner {
 
 	public static void main(String[] args) {
-		LogMetricsCalculator metrics = new LogMetricsCalculator(args[0], args[1]);
+		String path = args[0];
+		String outputDir = args[1];
+		
+//		String path = "/Users/mauricioaniche/log-study/spring-framework";
+//		String outputDir = "/Users/mauricioaniche/log-study/";
+		
+		LogMetricsCalculator metrics = new LogMetricsCalculator(path, outputDir);
 		metrics.run();
 		
-		HistoricalLog historic = new HistoricalLog(args[0]);
+		HistoricalMetricsCalculator historical = new HistoricalMetricsCalculator(path, outputDir);
+		historical.run();
 	}
 }

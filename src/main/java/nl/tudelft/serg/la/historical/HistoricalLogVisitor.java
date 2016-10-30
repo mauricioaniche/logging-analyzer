@@ -3,30 +3,26 @@ package nl.tudelft.serg.la.historical;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.repodriller.RepositoryMining;
-import org.repodriller.Study;
 import org.repodriller.domain.Commit;
 import org.repodriller.domain.Modification;
 import org.repodriller.domain.ModificationType;
-import org.repodriller.filter.range.Commits;
 import org.repodriller.persistence.PersistenceMechanism;
 import org.repodriller.scm.CommitVisitor;
-import org.repodriller.scm.GitRepository;
 import org.repodriller.scm.SCMRepository;
 
-public class HistoricalLog implements Study, CommitVisitor {
+public class HistoricalLogVisitor implements CommitVisitor {
 
-	private String path;
 	private Map<String, HistoricFile> files;
 
-	public HistoricalLog(String path) {
-		this.path = path;
+	public HistoricalLogVisitor() {
 		this.files = new HashMap<>();
 	}
 
 	@Override
 	public void process(SCMRepository repo, Commit commit, PersistenceMechanism writer) {
 		for(Modification m : commit.getModifications()) {
+			if(!m.fileNameEndsWith("java")) continue;
+			
 			if(files.containsKey(m.getOldPath()) && m.getType().equals(ModificationType.RENAME)) {
 				HistoricFile file = files.get(m.getOldPath());
 				files.remove(m.getOldPath());
@@ -38,7 +34,10 @@ public class HistoricalLog implements Study, CommitVisitor {
 			}
 			
 			HistoricFile file = files.get(m.getNewPath());
-			file.committed();
+			
+			LogDiffAnalyzer analyzer = new LogDiffAnalyzer();
+			LogAnalysisResult result = analyzer.analyze(m.getDiff());
+			file.committed(commit.getHash(), commit.getDate(), commit.getAuthor().getEmail(), result);
 			
 		}
 	}
@@ -48,13 +47,8 @@ public class HistoricalLog implements Study, CommitVisitor {
 		return "historical";
 	}
 
-	@Override
-	public void execute() {
-		new RepositoryMining()
-			.in(GitRepository.singleProject(path))
-			.through(Commits.all())
-			.process(this)
-			.mine();
+	public Map<String, HistoricFile> getFiles() {
+		return files;
 	}
 
 }

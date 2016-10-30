@@ -35,4 +35,13 @@ public enum LogLevel {
 		}
 		return null;
 	}
+	
+	public static String direction(String from, String to) {
+		LogLevel levelFrom = Enum.valueOf(LogLevel.class, from);
+		LogLevel levelTo = Enum.valueOf(LogLevel.class, to);
+		
+		if(levelFrom.getWeight() > levelTo.getWeight()) return "increased";
+		else if(levelFrom.getWeight() > levelTo.getWeight()) return "reduced";
+		else return "I-DONT-KNOW";
+	}
 }

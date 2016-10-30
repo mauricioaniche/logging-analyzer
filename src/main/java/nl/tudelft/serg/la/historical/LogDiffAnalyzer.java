@@ -7,8 +7,7 @@ public class LogDiffAnalyzer {
 	private static String[] logFunctions = { "LOG", "LOGGER" };
 	
 	public LogAnalysisResult analyze(String diff) {
-		int logAdds = 0;
-		int logDels = 0;
+		LogAnalysisResult result = new LogAnalysisResult();
 		
 		String[] lines = diff.replace("\r", "").split("\n");
 		for(int i = 0; i < lines.length; i++) {
@@ -21,11 +20,22 @@ public class LogDiffAnalyzer {
 			boolean logAdded = isAdd(line) && isLog(line);
 			boolean priorLineIsLogDeleted = isDel(lines[i-1]) && isLog(lines[i-1]);
 
-			if(logDeleted && !nextLineIsLogAdded) logDels++;
-			else if(logAdded && !priorLineIsLogDeleted) logAdds++;
+			if(logDeleted && !nextLineIsLogAdded) result.logDeleted();
+			else if(logAdded && !priorLineIsLogDeleted) result.logAdded();
+			else if(logAdded && priorLineIsLogDeleted) {
+				result.logUpdated(logType(lines[i-1]), logType(line));
+			}
 		}
 		
-		return new LogAnalysisResult(logAdds, logDels);
+		return result;
+	}
+
+	private String logType(String line) {
+		line = line.toUpperCase();
+		for(LogLevel level : LogLevel.values()) {
+			if(line.contains("." + level.toString())) return level.toString();
+		}
+		return "I-DONT-KNOW";
 	}
 
 	private boolean isDel(String line) {

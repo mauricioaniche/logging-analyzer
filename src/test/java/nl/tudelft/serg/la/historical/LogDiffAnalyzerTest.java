@@ -75,6 +75,31 @@ public class LogDiffAnalyzerTest {
 		
 		Assert.assertEquals(0, result.getLogDels());
 		Assert.assertEquals(0, result.getLogAdds());
+		Assert.assertEquals(1, result.getLogUpdates());
+		
+	}
+
+	@Test
+	public void logUpdatedAndChangedLevel() {
+		String diff = 
+				"diff --git a/A.java b/A.java\n"+
+						"index a1e3870..4d02d66 100644\n"+
+						"--- a/A.java\n"+
+						"+++ b/A.java\n"+
+						"@@ -4,7 +4,7 @@ a\n"+
+						" a\n"+
+						" a\n"+
+						" a\n"+
+						"-log.info(\"aaaa\");\n"+
+						"+log.debug(\"baaaa\");\n"+
+						" b\n"+
+						" b\n"+
+						" b";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(1, result.getLogUpdates());
+		Assert.assertEquals("INFO -> DEBUG", result.getLevelChanges().get(0));
 		
 	}
 

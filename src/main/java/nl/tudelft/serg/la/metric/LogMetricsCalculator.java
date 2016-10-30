@@ -14,6 +14,7 @@ import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.LogStatement;
 import nl.tudelft.serg.la.jdt.FileUtils;
 import nl.tudelft.serg.la.jdt.JDTRunner;
+import nl.tudelft.serg.la.util.StringUtils;
 
 public class LogMetricsCalculator {
 
@@ -30,7 +31,7 @@ public class LogMetricsCalculator {
 		this.outputDir = outputDir;
 		this.javaFilesRepo = new HashMap<>();
 
-		this.projectName = extractProjectNameFromFolder(path);
+		this.projectName = StringUtils.extractProjectNameFromFolder(path);
 		this.srcDirs = FileUtils.getAllDirs(path);
 		this.javaFilePaths = FileUtils.getAllJavaFiles(path);
 	}
@@ -93,12 +94,6 @@ public class LogMetricsCalculator {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private String extractProjectNameFromFolder(String path) {
-		if(path.endsWith("/")) path = path.substring(0, path.length()-2);
-		path = "/" + path;
-		return path.substring(path.lastIndexOf("/")+1);
 	}
 
 	private void writeProductMetricsOutput() {
