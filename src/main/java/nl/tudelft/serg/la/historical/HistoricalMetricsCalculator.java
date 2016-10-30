@@ -2,6 +2,7 @@ package nl.tudelft.serg.la.historical;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -33,14 +34,38 @@ public class HistoricalMetricsCalculator {
 		Map<String, HistoricFile> files = visitor1.getFiles();
 		Map<String, Calendar> dates = visitor2.getDates();
 		
-		printLogMetrics(files, dates);
+		printLogEvolution(files, dates);
 		printLogLevelChanges(files, dates);
+		printLogProcessMetrics(files);
 		printAuthors(files, visitor2);
 		printBugs(files, visitor2, visitor3);
 		
 	}
 
-	private void printLogMetrics(Map<String, HistoricFile> files, Map<String, Calendar> dates) {
+	private void printLogProcessMetrics(Map<String, HistoricFile> files) {
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-log-process-metrics.csv");
+			ps.println("project,file,logadd,logdel");
+			
+			for(String file : files.keySet()) {
+				HistoricFile hf = files.get(file);
+					
+				ps.println(
+					projectName + "," +
+					file + "," +
+					hf.logadd() + "," +
+					hf.logdel()
+				);
+			}
+			
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
+	private void printLogEvolution(Map<String, HistoricFile> files, Map<String, Calendar> dates) {
 		try {
 			PrintStream ps = new PrintStream(outputDir + projectName + "-log-evolution.csv");
 			ps.println("project,file,commit,date,adds,deletions,updates");
@@ -52,14 +77,14 @@ public class HistoricalMetricsCalculator {
 					LogAnalysisResult logAnalysisResult = hf.getLogEvolution().get(commit);
 					
 					ps.println(
-						projectName + "," +
-						file + "," +
-						commit + "," +
-						dates.get(commit) + "," +
-						logAnalysisResult.getLogAdds() + "," +
-						logAnalysisResult.getLogDels() + "," +
-						logAnalysisResult.getLogUpdates()
-					);
+							projectName + "," +
+									file + "," +
+									commit + "," +
+									new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dates.get(commit).getTime()) + "," +
+									logAnalysisResult.getLogAdds() + "," +
+									logAnalysisResult.getLogDels() + "," +
+									logAnalysisResult.getLogUpdates()
+							);
 				}
 			}
 			
@@ -79,7 +104,7 @@ public class HistoricalMetricsCalculator {
 				ps.println(
 					projectName + "," +
 					commit + "," +
-					visitor2.getDates().get(commit) + "," +
+					new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(visitor2.getDates().get(commit).getTime()) + "," +
 					visitor2.getAuthors().get(commit)
 				);
 			}
@@ -100,7 +125,7 @@ public class HistoricalMetricsCalculator {
 				ps.println(
 					projectName + "," +
 					commit + "," +
-					visitor2.getDates().get(commit) + "," +
+					new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(visitor2.getDates().get(commit).getTime()) + "," +
 					bugs.getBugs().get(commit)
 				);
 			}
@@ -128,7 +153,7 @@ public class HistoricalMetricsCalculator {
 							projectName + "," +
 							file + "," +
 							commit + "," +
-							dates.get(commit) + ","+
+							new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(dates.get(commit).getTime()) + ","+
 							change + "," +
 							direction(change)
 						);

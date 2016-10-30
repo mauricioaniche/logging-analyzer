@@ -32,5 +32,17 @@ public class HistoricFile {
 	public Map<String, LogAnalysisResult> getLogEvolution() {
 		return logEvolution;
 	}
+	
+	public double logadd() {
+		if(commits==0) return 0;
+		int totalLogsAdded = logEvolution.values().stream().mapToInt(x -> x.getLogAdds()).sum();
+		return totalLogsAdded / (double) commits;
+	}
+
+	public double logdel() {
+		if(commits==0) return 0;
+		int totalLogsAdded = logEvolution.values().stream().mapToInt(x -> x.getLogDels()).sum();
+		return totalLogsAdded / (double) commits;
+	}
 
 }

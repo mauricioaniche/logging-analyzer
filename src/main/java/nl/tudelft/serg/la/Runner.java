@@ -9,9 +9,6 @@ public class Runner {
 		String path = args[0];
 		String outputDir = args[1];
 		
-//		String path = "/Users/mauricioaniche/log-study/spring-framework";
-//		String outputDir = "/Users/mauricioaniche/log-study/";
-		
 		LogMetricsCalculator metrics = new LogMetricsCalculator(path, outputDir);
 		metrics.run();
 		
