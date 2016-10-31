@@ -70,7 +70,7 @@ public class HistoricalMetricsCalculator {
 
 	private void printLogEvolution(Map<String, HistoricFile> files, Map<String, Calendar> dates) {
 		try {
-			PrintStream ps = new PrintStream(outputDir + projectName + "-log-evolution.csv");
+			PrintStream ps = new PrintStream(outputDir + projectName + "-log-churn.csv");
 			ps.println("project,file,commit,date,adds,deletions,updates");
 			
 			for(String file : files.keySet()) {
