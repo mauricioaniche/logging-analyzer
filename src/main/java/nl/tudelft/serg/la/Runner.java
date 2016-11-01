@@ -1,10 +1,12 @@
 package nl.tudelft.serg.la;
 
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Calendar;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jgit.api.Git;
 
 import nl.tudelft.serg.la.historical.HistoricalMetricsCalculator;
 import nl.tudelft.serg.la.metric.LogMetricsCalculator;
@@ -14,7 +16,7 @@ public class Runner {
 
 	private static Logger log = Logger.getLogger(Runner.class);
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException {
 		
 		Calendar started = Calendar.getInstance();
 		
@@ -31,6 +33,13 @@ public class Runner {
 		PrintStream ps = new PrintStream(outputDir + StringUtils.extractProjectNameFromFolder(path) + ".dir");
 		ps.print(path + (path.endsWith("/")?"":"/"));
 		ps.close();
+
+		// get git remote
+		Git git = Git.open(new File(path));
+		String remoteUrl = git.getRepository().getConfig().getString("remote", "origin", "url");
+		PrintStream ps2 = new PrintStream(outputDir + StringUtils.extractProjectNameFromFolder(path) + "-git.dir");
+		ps2.print(remoteUrl);
+		ps2.close();
 		
 		Calendar ended = Calendar.getInstance();
 		
