@@ -1,17 +1,20 @@
 package nl.tudelft.serg.la;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
 import nl.tudelft.serg.la.historical.HistoricalMetricsCalculator;
 import nl.tudelft.serg.la.metric.LogMetricsCalculator;
+import nl.tudelft.serg.la.util.StringUtils;
 
 public class Runner {
 
 	private static Logger log = Logger.getLogger(Runner.class);
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		
 		Calendar started = Calendar.getInstance();
 		
@@ -24,6 +27,11 @@ public class Runner {
 		HistoricalMetricsCalculator historical = new HistoricalMetricsCalculator(path, outputDir);
 		historical.run();
 
+		// write .dir file
+		PrintStream ps = new PrintStream(outputDir + StringUtils.extractProjectNameFromFolder(path) + ".dir");
+		ps.print(path + (path.endsWith("/")?"":"/"));
+		ps.close();
+		
 		Calendar ended = Calendar.getInstance();
 		
 		long diff = ended.getTime().getTime() - started.getTime().getTime();
