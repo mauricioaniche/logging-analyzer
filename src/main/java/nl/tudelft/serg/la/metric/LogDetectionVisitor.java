@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
+import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -58,12 +59,26 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	
 	@Override
 	public boolean visit(MethodDeclaration node) {
-		position.push("method");
+		if(node.isConstructor()) position.push("constructor");
+		else position.push("method");
+		
 		return true;
 	}
 	
 	@Override
 	public void endVisit(MethodDeclaration node) {
+		this.position.pop();
+	}
+
+	@Override
+	public boolean visit(Initializer node) {
+		position.push("initializer");
+		
+		return true;
+	}
+	
+	@Override
+	public void endVisit(Initializer node) {
 		this.position.pop();
 	}
 	
