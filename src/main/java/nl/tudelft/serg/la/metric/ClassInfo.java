@@ -3,6 +3,7 @@ package nl.tudelft.serg.la.metric;
 import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -41,8 +42,22 @@ public class ClassInfo extends ASTVisitor implements JDTVisitor {
 
 	@Override
 	public boolean visit(EnumDeclaration node) {
-		String className = null;
 		String type = "enum";
+		String className = null;
+		
+		ITypeBinding binding = node.resolveBinding();
+		if(binding!=null)
+			className = binding.getBinaryName();
+		if(className==null) className = node.getName().toString();
+		
+		javaFilesRepo.get(path).setClassInfo(className, type);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(AnnotationTypeDeclaration node) {
+		String className = null;
+		String type = "annotation";
 		
 		ITypeBinding binding = node.resolveBinding();
 		if(binding!=null)
@@ -59,6 +74,4 @@ public class ClassInfo extends ASTVisitor implements JDTVisitor {
 		cu.accept(this);
 		
 	}
-	
-	
 }

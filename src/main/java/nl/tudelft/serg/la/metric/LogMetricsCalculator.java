@@ -52,15 +52,15 @@ public class LogMetricsCalculator {
 	private void writeLogPositionOutput() {
 		try {
 			PrintStream ps = new PrintStream(outputDir + projectName + "-logs.csv");
-			ps.println("project,file,class_name,type,strings,strings_length,variables,has_exception,exception_type");
+			ps.println("project,file,line,level,position,strings,strings_length,variables,has_exception,exception_type");
 			for(String filePath : javaFilesRepo.keySet()) {
 				JavaFile file = javaFilesRepo.get(filePath);
 				
 				for(LogStatement line : file.getAllLogs()) {
 					ps.println(
 						projectName + "," +
-						line.getLineNumber() + ","+
 						file.getFullPath() + "," +
+						line.getLineNumber() + ","+
 						line.getLevel() + "," +
 						line.getPosition() + "," +
 						line.getMessage().getQtyOfStrings() + "," +
