@@ -10,11 +10,11 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.repodriller.plugin.jdt.JDTRunner;
 
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.LogStatement;
-import nl.tudelft.serg.la.jdt.JDTRunner;
 
 public class LogDetectionVisitorTest {
 

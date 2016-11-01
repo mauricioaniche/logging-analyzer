@@ -7,9 +7,9 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.repodriller.plugin.jdt.JDTVisitor;
 
 import nl.tudelft.serg.la.JavaFile;
-import nl.tudelft.serg.la.jdt.JDTVisitor;
 
 public class ClassInfo extends ASTVisitor implements JDTVisitor {
 

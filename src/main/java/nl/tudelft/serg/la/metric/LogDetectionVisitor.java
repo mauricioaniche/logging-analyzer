@@ -24,12 +24,12 @@ import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.repodriller.plugin.jdt.JDTVisitor;
 
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.LogMessage;
 import nl.tudelft.serg.la.LogStatement;
-import nl.tudelft.serg.la.jdt.JDTVisitor;
 
 public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 

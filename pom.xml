@@ -76,6 +76,12 @@
 		    <version>1.0.0</version>
 		</dependency>
 
+		<dependency>
+		    <groupId>org.repodriller</groupId>
+		    <artifactId>plugin-jdt</artifactId>
+		    <version>0.0.1</version>
+		</dependency>
+
 	</dependencies>
 
 </project>

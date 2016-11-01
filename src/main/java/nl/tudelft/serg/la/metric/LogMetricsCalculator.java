@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.repodriller.plugin.jdt.FileUtils;
+import org.repodriller.plugin.jdt.JDTRunner;
 
 import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.LogStatement;
-import nl.tudelft.serg.la.jdt.FileUtils;
-import nl.tudelft.serg.la.jdt.JDTRunner;
 import nl.tudelft.serg.la.util.StringUtils;
 
 public class LogMetricsCalculator {
