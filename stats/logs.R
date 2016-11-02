@@ -17,5 +17,6 @@ table(logsOfClasses$position)
 table(logsOfClasses$variables)
 table(logsOfClasses$has_exception)
 table(logsOfClasses$exception_type)
+  
 vioplot(logsOfClasses$strings_length)
 summary(logsOfClasses$strings_length)
