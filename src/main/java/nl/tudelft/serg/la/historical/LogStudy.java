@@ -2,6 +2,8 @@ package nl.tudelft.serg.la.historical;
 
 import org.repodriller.RepositoryMining;
 import org.repodriller.Study;
+import org.repodriller.filter.commit.OnlyInMainBranch;
+import org.repodriller.filter.commit.OnlyNoMerge;
 import org.repodriller.filter.range.Commits;
 import org.repodriller.scm.GitRepository;
 
@@ -24,6 +26,7 @@ public class LogStudy implements Study {
 		new RepositoryMining()
 			.in(GitRepository.singleProject(path))
 			.through(Commits.all())
+			.withCommits(new OnlyInMainBranch(new OnlyNoMerge()))
 			.process(visitor1)
 			.process(visitor2)
 			.process(visitor3)
