@@ -1,8 +1,10 @@
 package nl.tudelft.serg.la.metric;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
@@ -37,7 +39,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	private static Logger log = Logger.getLogger(LogDetectionVisitor.class);
 	
 	private Map<String, JavaFile> javaFilesRepo;
-	private String logVarName = null;
+	private Set<String> logVarName;
 	private String path;
 	private List<String> importedLines;
 	private Stack<String> position;
@@ -48,6 +50,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		this.javaFilesRepo = javaFilesRepo;
 		this.importedLines = new ArrayList<>();
 		this.position = new Stack<>();
+		this.logVarName = new HashSet<>();
 	}
 
 	@Override
@@ -178,7 +181,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		
 		String varType = node.getType().toString();
 		if(varTypeIsLogging(varType)) {
-			logVarName = ((VariableDeclarationFragment)node.fragments().get(0)).getName().toString();
+			logVarName.add(((VariableDeclarationFragment)node.fragments().get(0)).getName().toString());
 		}
 		return true;
 	}
@@ -190,6 +193,10 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			return varType.endsWith("Log");
 		if(importedLines.contains("org.slf4j.Logger"))
 			return varType.endsWith("Logger");
+		if(importedLines.contains("org.apache.juli.logging.Log"))
+			return varType.endsWith("Log");
+		if(importedLines.contains("org.codehaus.plexus.logging.Logger"))
+			return varType.endsWith("Logger");
 		
 		return false;
 	}
@@ -198,8 +205,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		if(node.getExpression()==null) return false;
 		
 		String leftExpression = node.getExpression().toString();
-		
-		if(leftExpression.equals(logVarName)) {
+		if(logVarName.contains(leftExpression)) {
 			String logType = node.getName().toString();
 			if(LogLevel.isLogLevel(logType)) {
 				JavaFile javaFile = javaFilesRepo.get(path);

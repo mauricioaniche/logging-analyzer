@@ -169,6 +169,18 @@ public class LogDetectionVisitorTest {
 	}
 
 	@Test
+	public void mightBeMoreThanOneVariable_CodeFromActivemq_12() throws IOException {
+		String path = path("logdensity", "12");
+		JavaFile result1 = new JavaFile(path + "/TransportConnection.java", 100);
+		javaFilesRepo.put(path + "/TransportConnection.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		List<LogStatement> allLogs = result1.getAllLogs();
+		Assert.assertEquals(45, allLogs.size());
+	}
+
+	@Test
 	public void extractException() throws IOException {
 		String path = path("logdensity", "10");
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
