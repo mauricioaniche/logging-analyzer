@@ -26,7 +26,7 @@ public class LogStudy implements Study {
 		new RepositoryMining()
 			.in(GitRepository.singleProject(path))
 			.through(Commits.all())
-			.withCommits(new OnlyInMainBranch(new OnlyNoMerge()))
+			.filters(new OnlyInMainBranch(), new OnlyNoMerge())
 			.process(visitor1)
 			.process(visitor2)
 			.process(visitor3)
