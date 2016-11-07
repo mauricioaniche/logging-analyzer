@@ -181,6 +181,18 @@ public class LogDetectionVisitorTest {
 	}
 
 	@Test
+	public void logsViaConstructor_CodeFromHttpCore_13() throws IOException {
+		String path = path("logdensity", "13");
+		JavaFile result1 = new JavaFile(path + "/LoggingIOSession.java", 100);
+		javaFilesRepo.put(path + "/LoggingIOSession.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		List<LogStatement> allLogs = result1.getAllLogs();
+		Assert.assertEquals(9, allLogs.size());
+	}
+
+	@Test
 	public void extractException() throws IOException {
 		String path = path("logdensity", "10");
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);

@@ -193,8 +193,12 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			return varType.endsWith("Log");
 		if(importedLines.contains("org.slf4j.Logger"))
 			return varType.endsWith("Logger");
+		if(importedLines.contains("java.util.Logging.Logger"))
+			return varType.endsWith("Logger");
 		if(importedLines.contains("org.apache.juli.logging.Log"))
 			return varType.endsWith("Log");
+		if(importedLines.contains("org.apache.logging.log4j.Logger"))
+			return varType.endsWith("Logger");
 		if(importedLines.contains("org.codehaus.plexus.logging.Logger"))
 			return varType.endsWith("Logger");
 		
@@ -204,8 +208,9 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	public boolean visit(MethodInvocation node) {
 		if(node.getExpression()==null) return false;
 		
-		String leftExpression = node.getExpression().toString();
+		String leftExpression = node.getExpression().toString().replaceAll("this.", "");
 		if(logVarName.contains(leftExpression)) {
+			System.out.println(node);
 			String logType = node.getName().toString();
 			if(LogLevel.isLogLevel(logType)) {
 				JavaFile javaFile = javaFilesRepo.get(path);
