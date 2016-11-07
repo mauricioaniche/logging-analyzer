@@ -1,6 +1,8 @@
 package nl.tudelft.serg.la;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,12 @@ public class JavaFile {
 	public List<LogStatement> getAllLogs() {
 		List<LogStatement> combined = new ArrayList<>();
 		qtyOfLogs.values().forEach(list -> combined.addAll(list));
+		Collections.sort(combined, new Comparator<LogStatement>() {
+			@Override
+			public int compare(LogStatement o1, LogStatement o2) {
+				return o1.getLineNumber() - o2.getLineNumber();
+			}
+		});
 		return combined;
 	}
 

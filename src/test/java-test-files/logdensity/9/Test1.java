@@ -12,6 +12,12 @@ public class Test1 {
 		
 		int m = 0;
 		String x = "hi";
+		int y = 10;
+		
 		log.info("info " + m + " then " + x);
+		try {
+		} catch(Exception e) {
+			log.debug("info " + m + " then " + x + " then " + y + "end", e);
+		}
 	}
 }

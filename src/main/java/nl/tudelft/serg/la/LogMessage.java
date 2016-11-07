@@ -84,6 +84,7 @@ public class LogMessage {
 
 	public void addException(String type) {
 		this.hasException = true;
+		type = type.replace(",", " ");
 		this.exceptionType = type;
 	}
 	

@@ -183,9 +183,9 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			
 			LogMessage message = new LogMessage();
 			if(!node.arguments().isEmpty()) {
-				resolveArgumentsInMessage(message, node, node.arguments().get(0));
+				resolveArgumentsInMessage(message, node, node.arguments().get(0), false);
 				if(node.arguments().size()>1 && node.arguments().get(1)!=null) {
-					resolveArgumentsInMessage(message, node, node.arguments().get(1));
+					resolveArgumentsInMessage(message, node, node.arguments().get(1), true);
 				}
 			}
 			javaFile.log(new LogStatement(LogLevel.valueFor(node.getName().toString()), currentPosition(), lineNumber(node), message));
@@ -194,17 +194,17 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		return true;
 	}
 
-	private void resolveArgumentsInMessage(LogMessage current, MethodInvocation node, Object object) {
+	private void resolveArgumentsInMessage(LogMessage current, MethodInvocation node, Object object, boolean exceptionArg) {
 		
 		if(object == null) return ;
 		
 		if(object instanceof InfixExpression) {
 			InfixExpression exp = (InfixExpression) object; 
-			resolveArgumentsInMessage(current, node, exp.getLeftOperand());
-			resolveArgumentsInMessage(current, node, exp.getRightOperand());
+			resolveArgumentsInMessage(current, node, exp.getLeftOperand(), exceptionArg);
+			resolveArgumentsInMessage(current, node, exp.getRightOperand(), exceptionArg);
 			if(exp.extendedOperands()!=null) {
 				for(Object o : exp.extendedOperands()) {
-					resolveArgumentsInMessage(current, node, o);
+					resolveArgumentsInMessage(current, node, o, exceptionArg);
 				}
 			}
 		}
@@ -217,7 +217,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			IBinding binding = var.resolveBinding();
 			if(binding!=null) {
 				String type = binding.toString().split(" ")[0];
-				if(isException(type)) {
+				if(exceptionArg) {
 					current.addException(type);
 				} else {
 					current.addVar(var);
@@ -226,10 +226,6 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 			}
 		}
 	
-	}
-
-	private boolean isException(String type) {
-		return type.contains("Exception") || type.contains("Error"); 
 	}
 
 	private int lineNumber(MethodInvocation node) {

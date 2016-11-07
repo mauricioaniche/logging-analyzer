@@ -80,6 +80,31 @@ public class LogDetectionVisitorTest {
 	}
 
 	@Test
+	public void shouldUnderstandMapOfExceptions_14() throws IOException {
+		String path = path("logdensity", "14");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(1, result1.totalLogs());
+		Assert.assertTrue(result1.getAllLogs().get(0).getMessage().hasException());
+		Assert.assertEquals("Map<java.lang.String Errors>", result1.getAllLogs().get(0).getMessage().getExceptionType());
+	}
+
+	@Test
+	public void loggingViaMethod_15() throws IOException {
+		String path = path("logdensity", "15");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(1, result1.totalLogs());
+		Assert.assertEquals(11, result1.getAllLogs().get(0).getLineNumber());
+	}
+
+	@Test
 	public void shouldNotCrashWithSomeConstructions_3() throws IOException {
 		String path = path("logdensity", "3");
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
@@ -162,10 +187,17 @@ public class LogDetectionVisitorTest {
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
-		Assert.assertEquals(1, allLogs.size());
+		Assert.assertEquals(2, allLogs.size());
+		
 		Assert.assertEquals(2, allLogs.get(0).getMessage().getQtyOfStrings());
 		Assert.assertEquals(11, allLogs.get(0).getMessage().getStringsLength());
 		Assert.assertEquals(2, allLogs.get(0).getMessage().getQtyOfVariables());
+		Assert.assertFalse(allLogs.get(0).getMessage().hasException());
+		
+		Assert.assertEquals(4, allLogs.get(1).getMessage().getQtyOfStrings());
+		Assert.assertEquals(20, allLogs.get(1).getMessage().getStringsLength());
+		Assert.assertEquals(3, allLogs.get(1).getMessage().getQtyOfVariables());
+		Assert.assertTrue(allLogs.get(1).getMessage().hasException());
 	}
 
 	@Test
