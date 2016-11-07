@@ -1,10 +1,8 @@
 package nl.tudelft.serg.la.metric;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;
@@ -13,7 +11,6 @@ import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
@@ -25,7 +22,6 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SwitchStatement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.repodriller.plugin.jdt.JDTVisitor;
 
@@ -39,7 +35,6 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 	private static Logger log = Logger.getLogger(LogDetectionVisitor.class);
 	
 	private Map<String, JavaFile> javaFilesRepo;
-	private Set<String> logVarName;
 	private String path;
 	private List<String> importedLines;
 	private Stack<String> position;
@@ -50,7 +45,6 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		this.javaFilesRepo = javaFilesRepo;
 		this.importedLines = new ArrayList<>();
 		this.position = new Stack<>();
-		this.logVarName = new HashSet<>();
 	}
 
 	@Override
@@ -177,52 +171,24 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		return true;
 	}
 	
-	public boolean visit(FieldDeclaration node) {
-		
-		String varType = node.getType().toString();
-		if(varTypeIsLogging(varType)) {
-			logVarName.add(((VariableDeclarationFragment)node.fragments().get(0)).getName().toString());
-		}
-		return true;
-	}
-
-	private boolean varTypeIsLogging(String varType) {
-		if(importedLines.contains("org.apache.log4j.Logger"))
-			return varType.endsWith("Logger");
-		if(importedLines.contains("org.apache.commons.logging.Log"))
-			return varType.endsWith("Log");
-		if(importedLines.contains("org.slf4j.Logger"))
-			return varType.endsWith("Logger");
-		if(importedLines.contains("java.util.Logging.Logger"))
-			return varType.endsWith("Logger");
-		if(importedLines.contains("org.apache.juli.logging.Log"))
-			return varType.endsWith("Log");
-		if(importedLines.contains("org.apache.logging.log4j.Logger"))
-			return varType.endsWith("Logger");
-		if(importedLines.contains("org.codehaus.plexus.logging.Logger"))
-			return varType.endsWith("Logger");
-		
-		return false;
-	}
-	
 	public boolean visit(MethodInvocation node) {
 		if(node.getExpression()==null) return false;
 		
-		String leftExpression = node.getExpression().toString().replaceAll("this.", "");
-		if(logVarName.contains(leftExpression)) {
-			String logType = node.getName().toString();
-			if(LogLevel.isLogLevel(logType)) {
-				JavaFile javaFile = javaFilesRepo.get(path);
-				
-				LogMessage message = new LogMessage();
-				if(!node.arguments().isEmpty()) {
-					resolveArgumentsInMessage(message, node, node.arguments().get(0));
-					if(node.arguments().size()>1 && node.arguments().get(1)!=null) {
-						resolveArgumentsInMessage(message, node, node.arguments().get(1));
-					}
+		String leftExpression = node.getExpression().toString();
+		boolean nameRemindsLogging = leftExpression.toLowerCase().contains("log");
+		boolean methodNameRemindsLogLevel = LogLevel.isLogLevel(node.getName().toString());
+		
+		if(methodNameRemindsLogLevel && nameRemindsLogging) {
+			JavaFile javaFile = javaFilesRepo.get(path);
+			
+			LogMessage message = new LogMessage();
+			if(!node.arguments().isEmpty()) {
+				resolveArgumentsInMessage(message, node, node.arguments().get(0));
+				if(node.arguments().size()>1 && node.arguments().get(1)!=null) {
+					resolveArgumentsInMessage(message, node, node.arguments().get(1));
 				}
-				javaFile.log(new LogStatement(LogLevel.valueFor(logType), currentPosition(), lineNumber(node), message));
 			}
+			javaFile.log(new LogStatement(LogLevel.valueFor(node.getName().toString()), currentPosition(), lineNumber(node), message));
 		}
 		
 		return true;

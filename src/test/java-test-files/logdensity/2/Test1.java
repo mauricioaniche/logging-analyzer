@@ -4,17 +4,17 @@ import org.apache.log4j.Logger;
 
 public class Test2 {
 
-	private static OtherThing log;
+	private static OtherThing otherStuff;
 	
 	public void m1() {
 		
-		log.info("info hi");
-		log.info("info hi again");
-		log.warn("warn hi");
-		log.fatal("fatal hi");
-		log.error("error hi");
-		log.debug("debug hi");
-		log.trace("trace hi");
+		otherStuff.info("info hi");
+		otherStuff.info("info hi again");
+		otherStuff.warn("warn hi");
+		otherStuff.fatal("fatal hi");
+		otherStuff.error("error hi");
+		otherStuff.debug("debug hi");
+		otherStuff.trace("trace hi");
 		
 	}
 }

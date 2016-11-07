@@ -5,17 +5,17 @@ import static org.junit.Assert.assertEquals;
 
 public class Test2 {
 
-	private static OtherThing log;
+	private static OtherThing other;
 	
 	public void m1() {
 		
-		log.info("info hi");
-		log.info("info hi again");
-		log.warn("warn hi");
-		log.fatal("fatal hi");
-		log.error("error hi");
-		log.debug("debug hi");
-		log.trace("trace hi");
+		other.info("info hi");
+		other.info("info hi again");
+		other.warn("warn hi");
+		other.fatal("fatal hi");
+		other.error("error hi");
+		other.debug("debug hi");
+		other.trace("trace hi");
 		assertEquals("yeah, static invocation here", "yeah, static invocation here");
 		
 	}
