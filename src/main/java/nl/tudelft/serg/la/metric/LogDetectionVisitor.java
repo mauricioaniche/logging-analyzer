@@ -210,7 +210,6 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		
 		String leftExpression = node.getExpression().toString().replaceAll("this.", "");
 		if(logVarName.contains(leftExpression)) {
-			System.out.println(node);
 			String logType = node.getName().toString();
 			if(LogLevel.isLogLevel(logType)) {
 				JavaFile javaFile = javaFilesRepo.get(path);
