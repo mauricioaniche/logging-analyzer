@@ -52,7 +52,7 @@ public class LogMetricsCalculator {
 	private void writeLogPositionOutput() {
 		try {
 			PrintStream ps = new PrintStream(outputDir + projectName + "-logs.csv");
-			ps.println("project,file,line,level,position,strings,strings_length,variables,has_exception,exception_type");
+			ps.println("project,file,line,level,position,strings,strings_length,variables,method_invocations,has_exception,exception_type");
 			for(String filePath : javaFilesRepo.keySet()) {
 				JavaFile file = javaFilesRepo.get(filePath);
 				
@@ -66,6 +66,7 @@ public class LogMetricsCalculator {
 						line.getMessage().getQtyOfStrings() + "," +
 						line.getMessage().getStringsLength() + "," +
 						line.getMessage().getQtyOfVariables() + "," +
+						line.getMessage().getQtyOfMethodInvocations() + "," +
 						line.getMessage().hasException() + "," +
 						line.getMessage().getExceptionType()
 					);
@@ -125,7 +126,7 @@ public class LogMetricsCalculator {
 
 	private void runLogMetrics() {
 		new JDTRunner(true, true).run(srcDirs, javaFilePaths, 
-			() -> Arrays.asList(new ClassInfo(javaFilesRepo), new LogDetectionVisitor(javaFilesRepo)));
+			() -> Arrays.asList(new ClassInfo(javaFilesRepo), new LogVisitor(javaFilesRepo)));
 	}
 
 	private void calculateLoc() {

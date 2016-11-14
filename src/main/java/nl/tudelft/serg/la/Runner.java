@@ -17,7 +17,7 @@ public class Runner {
 	private static Logger log = Logger.getLogger(Runner.class);
 	
 	public static void main(String[] args) throws IOException {
-		
+	
 		Calendar started = Calendar.getInstance();
 		
 		String path = args[0];

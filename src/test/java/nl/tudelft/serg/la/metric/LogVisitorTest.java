@@ -16,7 +16,7 @@ import nl.tudelft.serg.la.JavaFile;
 import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.LogStatement;
 
-public class LogDetectionVisitorTest {
+public class LogVisitorTest {
 
 	private Map<String, JavaFile> javaFilesRepo;
 
@@ -37,7 +37,7 @@ public class LogDetectionVisitorTest {
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		javaFilesRepo.put(path + "/Test2.java", result2);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(2, result1.getQtyLogs(LogLevel.INFO));
 		Assert.assertEquals(1, result1.getQtyLogs(LogLevel.WARN));
@@ -62,7 +62,7 @@ public class LogDetectionVisitorTest {
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		javaFilesRepo.put(path + "/Test2.java", result2);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(7, result1.totalLogs());
 		Assert.assertEquals(7, result2.totalLogs());
@@ -74,7 +74,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(0, result1.totalLogs());
 	}
@@ -85,7 +85,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(1, result1.totalLogs());
 		Assert.assertTrue(result1.getAllLogs().get(0).getMessage().hasException());
@@ -98,7 +98,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(1, result1.totalLogs());
 		Assert.assertEquals(11, result1.getAllLogs().get(0).getLineNumber());
@@ -110,7 +110,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		Assert.assertEquals(0, result1.totalLogs());
 	}
@@ -123,7 +123,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(9, allLogs.size());
@@ -143,7 +143,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(1, allLogs.size());
@@ -156,7 +156,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(2, allLogs.size());
@@ -170,7 +170,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(2, allLogs.size());
@@ -184,7 +184,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(2, allLogs.size());
@@ -206,7 +206,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/TransportConnection.java", 100);
 		javaFilesRepo.put(path + "/TransportConnection.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(45, allLogs.size());
@@ -218,7 +218,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/LoggingIOSession.java", 100);
 		javaFilesRepo.put(path + "/LoggingIOSession.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(9, allLogs.size());
@@ -230,7 +230,7 @@ public class LogDetectionVisitorTest {
 		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
 		javaFilesRepo.put(path + "/Test1.java", result1);
 		
-		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogDetectionVisitor(javaFilesRepo)));
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
 		List<LogStatement> allLogs = result1.getAllLogs();
 		Assert.assertEquals(1, allLogs.size());
@@ -241,6 +241,72 @@ public class LogDetectionVisitorTest {
 		Assert.assertEquals("IOException", allLogs.get(0).getMessage().getExceptionType());
 	}
 	
+
+	@Test
+	public void logMethodWithPriority_16() throws IOException {
+		String path = path("logdensity", "16");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(2, result1.totalLogs());
+		
+		Assert.assertEquals(LogLevel.DEBUG, result1.getAllLogs().get(0).getLevel());
+		Assert.assertEquals(LogLevel.TRACE, result1.getAllLogs().get(1).getLevel());
+		Assert.assertEquals("java.lang.Exception", result1.getAllLogs().get(1).getMessage().getExceptionType());
+	}
+
+	@Test
+	public void ignoreMethodsThatYouDoNotUnderstand_17() throws IOException {
+		String path = path("logdensity", "17");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(0, result1.totalLogs());
+	}
+
+	@Test
+	public void countMethodInvocationInLogMessage_18() throws IOException {
+		String path = path("logdensity", "18");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(1, result1.totalLogs());
+		Assert.assertEquals(1, result1.getAllLogs().get(0).getMessage().getQtyOfMethodInvocations());
+	}
+	
+	@Test
+	public void javaUtilLogging_19() throws IOException {
+		String path = path("logdensity", "19");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(1, result1.totalLogs());
+		Assert.assertEquals(LogLevel.FINE, result1.getAllLogs().get(0).getLevel());
+		Assert.assertEquals(3, result1.getAllLogs().get(0).getMessage().getStringsLength());
+		Assert.assertEquals(1, result1.getAllLogs().get(0).getMessage().getQtyOfVariables());
+	}
+	
+	
+	@Test
+	public void javaUtilLoggingInSuperClass_20() throws IOException {
+		String path = path("logdensity", "20");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(1, result1.totalLogs());
+		Assert.assertEquals(LogLevel.DEBUG, result1.getAllLogs().get(0).getLevel());
+		Assert.assertEquals(2, result1.getAllLogs().get(0).getMessage().getStringsLength());
+	}
 	
 	
 }

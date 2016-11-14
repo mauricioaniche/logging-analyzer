@@ -7,6 +7,7 @@ public class LogMessage {
 	private int qtyOfStrings;
 	private int stringsLength;
 	private int qtyOfVariables;
+	private int qtyOfMethodInvocations;
 	private boolean hasException;
 	private String exceptionType;
 	
@@ -40,17 +41,12 @@ public class LogMessage {
 	}
 
 	@Override
-	public String toString() {
-		return "LogMessage [qtyOfStrings=" + qtyOfStrings + ", stringsLength=" + stringsLength + ", qtyOfVariables="
-				+ qtyOfVariables + ", hasException=" + hasException + ", exceptionType=" + exceptionType + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((exceptionType == null) ? 0 : exceptionType.hashCode());
 		result = prime * result + (hasException ? 1231 : 1237);
+		result = prime * result + qtyOfMethodInvocations;
 		result = prime * result + qtyOfStrings;
 		result = prime * result + qtyOfVariables;
 		result = prime * result + stringsLength;
@@ -73,6 +69,8 @@ public class LogMessage {
 			return false;
 		if (hasException != other.hasException)
 			return false;
+		if (qtyOfMethodInvocations != other.qtyOfMethodInvocations)
+			return false;
 		if (qtyOfStrings != other.qtyOfStrings)
 			return false;
 		if (qtyOfVariables != other.qtyOfVariables)
@@ -82,13 +80,25 @@ public class LogMessage {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "LogMessage [qtyOfStrings=" + qtyOfStrings + ", stringsLength=" + stringsLength + ", qtyOfVariables="
+				+ qtyOfVariables + ", qtyOfMethodInvocations=" + qtyOfMethodInvocations + ", hasException="
+				+ hasException + ", exceptionType=" + exceptionType + "]";
+	}
+
 	public void addException(String type) {
 		this.hasException = true;
 		type = type.replace(",", " ");
 		this.exceptionType = type;
 	}
-	
-	
-	
+
+	public void addMethodInvocation() {
+		this.qtyOfMethodInvocations++;
+	}
+
+	public int getQtyOfMethodInvocations() {
+		return qtyOfMethodInvocations;
+	}
 	
 }

@@ -30,9 +30,9 @@ import nl.tudelft.serg.la.LogLevel;
 import nl.tudelft.serg.la.LogMessage;
 import nl.tudelft.serg.la.LogStatement;
 
-public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
+public class LogVisitor extends ASTVisitor implements JDTVisitor {
 
-	private static Logger log = Logger.getLogger(LogDetectionVisitor.class);
+	private static Logger log = Logger.getLogger(LogVisitor.class);
 	
 	private Map<String, JavaFile> javaFilesRepo;
 	private String path;
@@ -41,7 +41,7 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 
 	private CompilationUnit cu;
 	
-	public LogDetectionVisitor(Map<String, JavaFile> javaFilesRepo) {
+	public LogVisitor(Map<String, JavaFile> javaFilesRepo) {
 		this.javaFilesRepo = javaFilesRepo;
 		this.importedLines = new ArrayList<>();
 		this.position = new Stack<>();
@@ -177,9 +177,9 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		String leftExpression = node.getExpression().toString();
 		boolean nameRemindsLogging = leftExpression.toLowerCase().contains("log");
 		boolean methodNameRemindsLogLevel = LogLevel.isLogLevel(node.getName().toString());
+		boolean methodNameIsLog = node.getName().toString().toLowerCase().equals("log");
 		
 		if(methodNameRemindsLogLevel && nameRemindsLogging) {
-			JavaFile javaFile = javaFilesRepo.get(path);
 			
 			LogMessage message = new LogMessage();
 			if(!node.arguments().isEmpty()) {
@@ -188,7 +188,31 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 					resolveArgumentsInMessage(message, node, node.arguments().get(1), true);
 				}
 			}
+			
+			JavaFile javaFile = javaFilesRepo.get(path);
 			javaFile.log(new LogStatement(LogLevel.valueFor(node.getName().toString()), currentPosition(), lineNumber(node), message));
+		}
+		
+		else if (nameRemindsLogging && methodNameIsLog) {
+			
+			if(!node.arguments().isEmpty() && node.arguments().size()>=2) {
+			
+				String levelConstant = node.arguments().get(0).toString();
+				String level = "";
+				if(levelConstant.contains(".")) level = levelConstant.substring(levelConstant.lastIndexOf(".")+1); 
+				else level = levelConstant;
+				
+				if(LogLevel.isLogLevel(level)) {
+					LogMessage message = new LogMessage();
+					resolveArgumentsInMessage(message, node, node.arguments().get(1), false);
+					if(node.arguments().size()>2 && node.arguments().get(2)!=null) {
+						resolveArgumentsInMessage(message, node, node.arguments().get(2), true);
+					}
+					
+					JavaFile javaFile = javaFilesRepo.get(path);
+					javaFile.log(new LogStatement(LogLevel.valueFor(level), currentPosition(), lineNumber(node), message));
+				}
+			}
 		}
 		
 		return true;
@@ -211,6 +235,9 @@ public class LogDetectionVisitor extends ASTVisitor implements JDTVisitor {
 		else if(object instanceof StringLiteral) {
 			StringLiteral literal = (StringLiteral) object;
 			current.addString(literal.getLiteralValue().length());
+		}
+		else if(object instanceof MethodInvocation) {
+			current.addMethodInvocation();
 		}
 		else if(object instanceof SimpleName) {
 			SimpleName var = (SimpleName) object;

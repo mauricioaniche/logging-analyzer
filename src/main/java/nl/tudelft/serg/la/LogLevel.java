@@ -2,12 +2,21 @@ package nl.tudelft.serg.la;
 
 public enum LogLevel {
 
+	// all logging tools...
 	TRACE(1),
 	DEBUG(2),
 	INFO(3),
 	WARN(4),
 	ERROR(5),
-	FATAL(6);
+	FATAL(6),
+
+	// ... but java.util.Logging.Level is different!
+	SEVERE(5),
+	WARNING(4),
+	CONFIG(2),
+	FINE(1),
+	FINER(0),
+	FINEST(-1);
 
 	private int weight;
 	
