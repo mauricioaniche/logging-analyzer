@@ -3,8 +3,12 @@ package nl.tudelft.serg.la.metric;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -41,14 +45,49 @@ public class LogMetricsCalculator {
 		log.info("Parsing project at " + path);
 		
 		calculateLoc();
+		countLogLibrariesImports();
 		runLogMetrics();
 		
 		writeJavaTypesOutput();
 		writeProductMetricsOutput();
 		writeLogPositionOutput();
+		writeLogLibraries();
 		
 	}
 
+	private void countLogLibrariesImports() {
+		for(String javaFilePath : javaFilePaths) {
+			
+			try {
+				List<String> logLibrary = new LogLibraryImportFinder().find(new String(Files.readAllBytes(Paths.get(javaFilePath)), StandardCharsets.UTF_8));
+				
+				JavaFile javaFile = javaFilesRepo.get(javaFilePath);
+				javaFile.setLogLibrary(logLibrary);
+				
+			} catch (Exception e) {
+				log.error("error in " + javaFilePath, e);
+			}
+		}		
+	}
+
+	private void writeLogLibraries() {
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-libraries.csv");
+			ps.println("project,file,library");
+			for(String filePath : javaFilesRepo.keySet()) {
+				JavaFile file = javaFilesRepo.get(filePath);
+					ps.println(
+						projectName + "," +
+						file.getFullPath() + "," +
+						(file.getLogLibrary().isEmpty() ? "DO-NOT-KNOW" : file.getLogLibrary().toString().replace("[", "").replace("]", "").replace(", ", ";"))
+					);
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private void writeLogPositionOutput() {
 		try {
 			PrintStream ps = new PrintStream(outputDir + projectName + "-logs.csv");

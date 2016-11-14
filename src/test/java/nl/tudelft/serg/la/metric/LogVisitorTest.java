@@ -250,11 +250,12 @@ public class LogVisitorTest {
 		
 		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
 		
-		Assert.assertEquals(2, result1.totalLogs());
+		Assert.assertEquals(3, result1.totalLogs());
 		
 		Assert.assertEquals(LogLevel.DEBUG, result1.getAllLogs().get(0).getLevel());
-		Assert.assertEquals(LogLevel.TRACE, result1.getAllLogs().get(1).getLevel());
-		Assert.assertEquals("java.lang.Exception", result1.getAllLogs().get(1).getMessage().getExceptionType());
+		Assert.assertEquals(LogLevel.INFO, result1.getAllLogs().get(1).getLevel());
+		Assert.assertEquals(LogLevel.TRACE, result1.getAllLogs().get(2).getLevel());
+		Assert.assertEquals("java.lang.Exception", result1.getAllLogs().get(2).getMessage().getExceptionType());
 	}
 
 	@Test
@@ -292,6 +293,18 @@ public class LogVisitorTest {
 		Assert.assertEquals(LogLevel.FINE, result1.getAllLogs().get(0).getLevel());
 		Assert.assertEquals(3, result1.getAllLogs().get(0).getMessage().getStringsLength());
 		Assert.assertEquals(1, result1.getAllLogs().get(0).getMessage().getQtyOfVariables());
+	}
+
+	@Test
+	public void javaUtilLoggingNoFullLevelName_21() throws IOException {
+		String path = path("logdensity", "21");
+		JavaFile result1 = new JavaFile(path + "/Test1.java", 100);
+		javaFilesRepo.put(path + "/Test1.java", result1);
+		
+		new JDTRunner(true, true).run(path, () -> Arrays.asList(new LogVisitor(javaFilesRepo)));
+		
+		Assert.assertEquals(1, result1.totalLogs());
+		Assert.assertEquals(LogLevel.FINER, result1.getAllLogs().get(0).getLevel());
 	}
 	
 	

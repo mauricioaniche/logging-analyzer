@@ -12,6 +12,7 @@ public class Test1 {
 		Exception e;
 		
 		log.log(Level.DEBUG, "hi hi hi");
+		log.log(INFO, "hi hi hi");
 		log.log(Level.TRACE, "hi hi hi", e);
 		
 		log.nothing(Level.DEBUG, "hihihi");
