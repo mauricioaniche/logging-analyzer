@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -42,7 +43,28 @@ public class HistoricalMetricsCalculator {
 		printLogProcessMetrics(files);
 		printAuthors(files, visitor2);
 		printBugs(files, visitor2, visitor3);
+		printSummary(visitor2);
+	}
+
+	private void printSummary(CommitInfoVisitor visitor2) {
+		Calendar maxDate = visitor2.getMaxDate();
+		int totalAuthors = new HashSet<>(visitor2.getAuthors().values()).size();
+		int totalCommits = visitor2.getCommits().size();
 		
+		try {
+			PrintStream ps = new PrintStream(outputDir + projectName + "-summary.csv");
+			ps.println("project,authors,commits,last_commit");
+			ps.println(
+				projectName + "," +
+				totalAuthors + "," +
+				totalCommits + "," +
+				maxDate.getTimeInMillis()
+			);
+			
+			ps.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void printLogProcessMetrics(Map<String, HistoricFile> files) {
