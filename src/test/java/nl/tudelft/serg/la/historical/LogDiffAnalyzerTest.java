@@ -14,7 +14,7 @@ public class LogDiffAnalyzerTest {
 			"+++ b/A.java\n"+
 			"@@ -1,3 +1,4 @@\n"+
 			" a\n"+
-			" log.info(\"aa\");\n"+
+			" log.info ( \"aa\");\n"+
 			"+log.info(\"bb\");\n"+
 			" b\n";
 		
@@ -159,5 +159,114 @@ public class LogDiffAnalyzerTest {
 		Assert.assertEquals(0, result.getLogAdds());
 		
 		
+	}
+	
+	@Test
+	public void supportLogDotLog() {
+		String diff = 
+			"diff --git a/A.java b/A.java\n"+
+			"index aa1aca0..25fd00d 100644\n"+
+			"--- a/A.java\n"+
+			"+++ b/A.java\n"+
+			"@@ -1,3 +1,4 @@\n"+
+			" a\n"+
+			" log.log(Level.FINEST, \"aa\");\n"+
+			"+log.log(Level.FINER, \"bb\");\n"+
+			" b\n";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(1, result.getLogAdds());
+		Assert.assertEquals(0, result.getLogDels());
+	}
+	
+	@Test
+	public void logDotLogUpdated() {
+		String diff = 
+				"diff --git a/A.java b/A.java\n"+
+				"index a1e3870..4d02d66 100644\n"+
+				"--- a/A.java\n"+
+				"+++ b/A.java\n"+
+				"@@ -4,7 +4,7 @@ a\n"+
+				" a\n"+
+				" a\n"+
+				" a\n"+
+				"-log.log(Level.FINEST, \"aaaa\");\n"+
+				"+log.log(Level.FINER, \"baaaa\");\n"+
+				" b\n"+
+				" b\n"+
+				" b";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(0, result.getLogDels());
+		Assert.assertEquals(0, result.getLogAdds());
+		Assert.assertEquals(1, result.getLogUpdates());
+		Assert.assertTrue(result.getLevelChanges().contains("FINEST -> FINER"));
+	}
+
+	@Test
+	public void logDotLogUpdatedWithStaticImportOfLevels() {
+		String diff = 
+				"diff --git a/A.java b/A.java\n"+
+						"index a1e3870..4d02d66 100644\n"+
+						"--- a/A.java\n"+
+						"+++ b/A.java\n"+
+						"@@ -4,7 +4,7 @@ a\n"+
+						" a\n"+
+						" a\n"+
+						" a\n"+
+						"-log.log(FINEST, \"aaaa\");\n"+
+						"+log.log(FINER, \"baaaa\");\n"+
+						" b\n"+
+						" b\n"+
+						" b";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(0, result.getLogDels());
+		Assert.assertEquals(0, result.getLogAdds());
+		Assert.assertEquals(1, result.getLogUpdates());
+		Assert.assertTrue(result.getLevelChanges().contains("FINEST -> FINER"));
+	}
+	
+	@Test
+	public void ignoreNonLog() {
+		String diff = 
+			"diff --git a/A.java b/A.java\n"+
+			"index aa1aca0..25fd00d 100644\n"+
+			"--- a/A.java\n"+
+			"+++ b/A.java\n"+
+			"@@ -1,3 +1,4 @@\n"+
+			" a\n"+
+			" log.anything( \"aa\");\n"+
+			"+log.other(\"bb\");\n"+
+			" b\n";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(0, result.getLogAdds());
+		Assert.assertEquals(0, result.getLogDels());
+		Assert.assertEquals(0, result.getLogUpdates());
+	}
+
+	@Test
+	public void ignoreMoreNonLog() {
+		String diff = 
+				"diff --git a/A.java b/A.java\n"+
+						"index aa1aca0..25fd00d 100644\n"+
+						"--- a/A.java\n"+
+						"+++ b/A.java\n"+
+						"@@ -1,3 +1,4 @@\n"+
+						" a\n"+
+						" logX.info( \"aa\");\n"+
+						"+warn.log(\"bb\");\n"+
+						" b\n";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(0, result.getLogAdds());
+		Assert.assertEquals(0, result.getLogDels());
+		Assert.assertEquals(0, result.getLogUpdates());
 	}
 }

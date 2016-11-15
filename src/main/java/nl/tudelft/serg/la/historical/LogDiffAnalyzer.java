@@ -52,11 +52,24 @@ public class LogDiffAnalyzer {
 	}
 
 	private String logType(String line) {
-		line = line.toUpperCase();
+		line = line.toUpperCase().replace(" ", "");
 		for(LogLevel level : LogLevel.values()) {
-			if(line.contains("." + level.toString())) return level.toString();
+			boolean containsLogLevelAsMethod = line.contains("." + level.toString() + "(");
+			
+			if(containsLogLevelAsMethod || containsLevelInLogDotLog(line, level)) {
+				return level.toString();
+			}
 		}
 		return "I-DONT-KNOW";
+	}
+
+	private boolean containsLevelInLogDotLog(String line, LogLevel level) {
+		line = line.toUpperCase();
+		line = line.replace(" ", "");
+		boolean containsFullLevelDeclaration = line.contains("LEVEL." + level.toString() + ",");
+		boolean containsStaticallyImportedLevel = line.contains("(" + level.toString() + ",");
+		
+		return containsFullLevelDeclaration || containsStaticallyImportedLevel;
 	}
 
 	private boolean isLog(String line) {
@@ -68,6 +81,12 @@ public class LogDiffAnalyzer {
 				if(line.contains(toDetect)) return true;
 			}
 		}
+		
+		for(String logFunction : logFunctions) {
+			String toDetect = logFunction.toUpperCase() + ".LOG";
+			if(line.contains(toDetect)) return true;
+		}
+		
 		
 		return false;
 	}
