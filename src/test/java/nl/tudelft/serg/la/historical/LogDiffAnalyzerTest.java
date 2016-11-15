@@ -271,7 +271,7 @@ public class LogDiffAnalyzerTest {
 	}
 	
 	@Test
-	public void logViaMethod() {
+	public void logDotLogViaMethod() {
 		String diff = 
 				"diff --git a/A.java b/A.java\n"+
 				"index a1e3870..4d02d66 100644\n"+
@@ -293,5 +293,40 @@ public class LogDiffAnalyzerTest {
 		Assert.assertEquals(0, result.getLogAdds());
 		Assert.assertEquals(1, result.getLogUpdates());
 		Assert.assertTrue(result.getLevelChanges().contains("FINEST -> FINER"));
+	}
+	
+	@Test
+	public void logViaMethod2() {
+		String diff = 
+			"diff --git a/A.java b/A.java\n"+
+			"index aa1aca0..25fd00d 100644\n"+
+			"--- a/A.java\n"+
+			"+++ b/A.java\n"+
+			"@@ -1,3 +1,4 @@\n"+
+			" a\n"+
+			" MyClass.getLog().info ( \"aa\");\n"+
+			"+MyClass.getLog().info(\"bb\");\n"+
+			" b\n";
+		
+		LogAnalysisResult result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(1, result.getLogAdds());
+		Assert.assertEquals(0, result.getLogDels());
+
+		diff = 
+			"diff --git a/A.java b/A.java\n"+
+					"index aa1aca0..25fd00d 100644\n"+
+					"--- a/A.java\n"+
+					"+++ b/A.java\n"+
+					"@@ -1,3 +1,4 @@\n"+
+					" a\n"+
+					" getLogger().info ( \"aa\");\n"+
+					"+getLogger().info(\"bb\");\n"+
+					" b\n";
+		
+		result = new LogDiffAnalyzer().analyze(diff);
+		
+		Assert.assertEquals(1, result.getLogAdds());
+		Assert.assertEquals(0, result.getLogDels());
 	}
 }
