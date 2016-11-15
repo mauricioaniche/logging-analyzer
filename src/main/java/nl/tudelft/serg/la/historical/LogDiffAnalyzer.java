@@ -12,7 +12,7 @@ import nl.tudelft.serg.la.LogLevel;
 
 public class LogDiffAnalyzer {
 
-	private static String[] logFunctions = { "LOG", "LOGGER" };
+	private static String[] logFunctions = { "LOG", "LOGGER", "GETLOG()", "GETLOGGER()" };
 	
 	public LogAnalysisResult analyze(String diff) {
 		LogAnalysisResult result = new LogAnalysisResult();
@@ -77,8 +77,8 @@ public class LogDiffAnalyzer {
 		
 		for(LogLevel level : LogLevel.values()) {
 			for(String logFunction : logFunctions) {
-				String toDetect = logFunction.toUpperCase() + "." + level.toString().toUpperCase();
-				if(line.contains(toDetect)) return true;
+				String invocationToLogMethod = logFunction.toUpperCase() + "." + level.toString().toUpperCase();
+				if(line.contains(invocationToLogMethod)) return true;
 			}
 		}
 		
